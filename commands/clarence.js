@@ -1,28 +1,32 @@
 const axios = require('axios');
+const { sendMessage } = require('../handles/sendMessage'); // Adjust the path as needed
 
 module.exports = {
   name: 'clarence',
   description: 'Ask a question to the Ai',
   author: 'Clarence',
   role: 1,
-  async execute(senderId, args, pageAccessToken, sendMessage) {
+  async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
+
     try {
       const apiUrl = `https://rest-api-french.onrender.com/api/clarencev2?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
       const response = await axios.get(apiUrl);
       const text = response.data.response;
 
       // Send the response, split into chunks if necessary
-      await sendResponseInChunks(senderId, text, pageAccessToken, sendMessage);
+      await sendResponseInChunks(senderId, text, pageAccessToken);
     } catch (error) {
       console.error('Error calling Ai:', error);
-      sendMessage(senderId, { text: 'Please enter your question' }, pageAccessToken);
+      await sendMessage(senderId, { text: 'Please enter your question' }, pageAccessToken);
     }
   }
 };
 
-async function sendResponseInChunks(senderId, text, pageAccessToken, sendMessage) {
+// Function to send response in chunks
+async function sendResponseInChunks(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
+
   if (text.length > maxMessageLength) {
     const messages = splitMessageIntoChunks(text, maxMessageLength);
     for (const message of messages) {
@@ -33,6 +37,7 @@ async function sendResponseInChunks(senderId, text, pageAccessToken, sendMessage
   }
 }
 
+// Function to split long messages into chunks
 function splitMessageIntoChunks(message, chunkSize) {
   const chunks = [];
   let chunk = '';
@@ -45,7 +50,7 @@ function splitMessageIntoChunks(message, chunkSize) {
     }
     chunk += `${word} `;
   }
-  
+
   if (chunk) {
     chunks.push(chunk.trim());
   }
