@@ -19,19 +19,24 @@ module.exports = {
     try {
       // Making a request to the voice API with the text and fixed id=8
       const res = await axios.get('https://joshweb.click/api/aivoice', {
-        params: { q: message, id: 8 }
+        params: { q: message, id: 8 },
+        responseType: 'arraybuffer' // Specify that the response is audio data
       });
 
-      if (!res || !res.data || !res.data.url) {
+      if (!res || !res.data) {
         throw new Error("Error generating voice message.");
       }
 
-      // Send the voice message as an audio attachment
+      // Convert the arraybuffer response to a Buffer and send it as audio
+      const audioBuffer = Buffer.from(res.data, 'binary');
+
+      // Send the audio message as an audio attachment
       await sendMessage(senderId, {
         attachment: {
           type: "audio",
           payload: {
-            url: res.data.url
+            data: audioBuffer.toString('base64'),
+            is_reusable: true
           }
         }
       }, pageAccessToken);
