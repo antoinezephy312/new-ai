@@ -4,80 +4,79 @@ const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: 'help',
-  description: 'Display available commands with descriptions',
+  description: 'Show available commands with descriptions',
   role: 1,
   author: 'kiana',
+  
   execute(senderId, args, pageAccessToken) {
     const commandsDir = path.join(__dirname, '../commands');
     const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
-    // Load and format each command with styled icons and titles
-    const commands = commandFiles.map((file, index) => {
+    // Load and format each command with an emoji
+    const commands = commandFiles.map((file) => {
       const command = require(path.join(commandsDir, file));
       return {
-        title: `✨ 𝐂𝐨𝐦𝐦𝐚𝐧𝐝: **${command.name.charAt(0).toUpperCase() + command.name.slice(1)}**`,
+        title: `✨ ${command.name.charAt(0).toUpperCase() + command.name.slice(1)}`,
         description: command.description,
         payload: `${command.name.toUpperCase()}_PAYLOAD`
       };
     });
 
-    const totalCommands = commandFiles.length;
+    const totalCommands = commands.length;
     const commandsPerPage = 5;
     const totalPages = Math.ceil(totalCommands / commandsPerPage);
     let page = parseInt(args[0], 10);
 
-    if (isNaN(page) || page < 1) {
-      page = 1;
+    // Default to page 1 if the page argument is invalid
+    if (isNaN(page) || page < 1) page = 1;
+
+    // Display all commands if "help all" is provided
+    if (args[0]?.toLowerCase() === 'all') {
+      const helpTextMessage = `🌟 **All Available Commands**\n📜 **Total Commands**: ${totalCommands}\n\n${commands.map((cmd, index) => `${index + 1}. ${cmd.title}\n📖 ${cmd.description}`).join('\n\n')}`;
+      return sendMessage(senderId, { text: helpTextMessage }, pageAccessToken);
     }
 
-    if (args[0] && args[0].toLowerCase() === 'all') {
-      const helpTextMessage = `💫 **𝐀𝐥𝐥 𝐀𝐯𝐚𝐢𝐥𝐚𝐛𝐥𝐞 𝐂𝐨𝐦𝐦𝐚𝐧𝐝𝐬**\n📜 **𝐓𝐨𝐭𝐚𝐥 𝐂𝐨𝐦𝐦𝐚𝐧𝐝𝐬:** ${totalCommands}\n\n${commands.map((cmd, index) => `**${index + 1}. ${cmd.title}**\n📖 ${cmd.description}`).join('\n\n')}`;
-
-      return sendMessage(senderId, {
-        text: helpTextMessage
-      }, pageAccessToken);
-    }
-
+    // Paginate commands
     const startIndex = (page - 1) * commandsPerPage;
-    const endIndex = startIndex + commandsPerPage;
-    const commandsForPage = commands.slice(startIndex, endIndex);
+    const commandsForPage = commands.slice(startIndex, startIndex + commandsPerPage);
 
     if (commandsForPage.length === 0) {
       return sendMessage(senderId, {
-        text: `🚫 **𝐎𝐨𝐩𝐬! 𝐍𝐨 𝐩𝐚𝐠𝐞 ${page}.**\n🗂️ **𝐀𝐯𝐚𝐢𝐥𝐚𝐛𝐥𝐞 𝐏𝐚𝐠𝐞𝐬:** 1 - ${totalPages}`,
+        text: `❌ Oops! Page ${page} doesn't exist. There are only ${totalPages} page(s) available.`,
       }, pageAccessToken);
     }
 
-    const helpTextMessage = `📖 **𝐂𝐨𝐦𝐦𝐚𝐧𝐝𝐬 𝐎𝐯𝐞𝐫𝐯𝐢𝐞𝐰**\n📄 **𝐏𝐚𝐠𝐞 ${page}/${totalPages}**\n🔢 **𝐓𝐨𝐭𝐚𝐥 𝐂𝐨𝐦𝐦𝐚𝐧𝐝𝐬:** ${totalCommands}\n\n${commandsForPage.map((cmd, index) => `**${startIndex + index + 1}. ${cmd.title}**\n📝 ${cmd.description}`).join('\n\n')}\n\n🌐 **𝐓𝐢𝐩:** 𝐓𝐲𝐩𝐞 "help [page]" 𝐟𝐨𝐫 𝐦𝐨𝐫𝐞 𝐩𝐚𝐠𝐞𝐬, 𝐨𝐫 "help all" 𝐭𝐨 𝐯𝐢𝐞𝐰 𝐚𝐥𝐥 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬!`;
+    // Format help message with emojis for better readability
+    const helpTextMessage = `🚀 **Commands List** (Page ${page}/${totalPages})\n📜 **Total Commands**: ${totalCommands}\n\n${commandsForPage.map((cmd, index) => `${startIndex + index + 1}. ${cmd.title}\n📝 ${cmd.description}`).join('\n\n')}\n\n📌 **Tip**: Use "help [page]" to switch pages, or "help all" to see all commands!`;
 
-    // Styled quick replies with page navigation and main menu access
-    const quickRepliesPage = [
+    // Generate quick replies with pagination options
+    const quickReplies = [
       ...commandsForPage.map((cmd) => ({
         content_type: "text",
-        title: cmd.title.replace('✨ 𝐂𝐨𝐦𝐦𝐚𝐧𝐝: **', '').replace('**', ''), // Clean title for quick replies
+        title: cmd.title.replace('✨ ', ''), // Cleaner title for quick replies
         payload: cmd.payload
       })),
       ...(page > 1 ? [{
         content_type: "text",
-        title: "⬅️ 𝐏𝐫𝐞𝐯",
+        title: "⬅️ Previous",
         payload: `HELP_${page - 1}`
       }] : []),
       ...(page < totalPages ? [{
         content_type: "text",
-        title: "➡️ 𝐍𝐞𝐱𝐭",
+        title: "➡️ Next",
         payload: `HELP_${page + 1}`
       }] : []),
       {
         content_type: "text",
-        title: "🏠 𝐌𝐚𝐢𝐧 𝐌𝐞𝐧𝐮",
+        title: "🏠 Main Menu",
         payload: "MAIN_MENU"
       }
     ];
 
-    // Sending the styled help message with quick reply options
+    // Send the formatted help message with quick replies
     sendMessage(senderId, {
       text: helpTextMessage,
-      quick_replies: quickRepliesPage
+      quick_replies: quickReplies
     }, pageAccessToken);
   }
 };
