@@ -20,7 +20,7 @@ module.exports = {
       const response = await axios.get(apiUrl);
       const rawResponse = response.data.response || '';
 
-      // Attempt to locate JSON part of the response
+      // Extract JSON part of the response
       const jsonStart = rawResponse.indexOf('{');
       const jsonEnd = rawResponse.lastIndexOf('}') + 1;
       
@@ -29,14 +29,7 @@ module.exports = {
       }
 
       const jsonString = rawResponse.substring(jsonStart, jsonEnd);
-
-      let parsedData;
-      try {
-        parsedData = JSON.parse(jsonString);
-      } catch (jsonError) {
-        console.error("Error parsing JSON:", jsonError);
-        throw new Error("Failed to parse JSON content.");
-      }
+      const parsedData = JSON.parse(jsonString);
       
       const text = parsedData.prompt || 'No response received. Please try again later.';
 
@@ -47,14 +40,16 @@ module.exports = {
       // Send the generated text response
       await sendMessage(senderId, { text }, pageAccessToken);
 
-      // If there is an image URL, send it as an attachment
+      // If there is an image URL, send it as an attachment with correct structure
       if (imageUrl) {
         await sendMessage(senderId, {
-          attachment: {
-            type: 'image',
-            payload: {
-              url: imageUrl,
-              is_reusable: true
+          message: {
+            attachment: {
+              type: 'image',
+              payload: {
+                url: imageUrl,
+                is_reusable: true
+              }
             }
           }
         }, pageAccessToken);
