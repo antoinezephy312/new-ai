@@ -1,9 +1,8 @@
 const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: 'sim',
-  description: 'talk with fun to simsimi',
+  description: 'talk with simsimi',
   author: 'Clarence',
   role: 1,
   async execute(senderId, args, pageAccessToken, sendMessage) {
@@ -11,12 +10,12 @@ module.exports = {
     try {
       const apiUrl = `https://simsimi-api-new.onrender.com/sim?q=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const text = response.data.respond;
+      const text = response.data.response;
 
       // Send the response, split into chunks if necessary
       await sendResponseInChunks(senderId, text, pageAccessToken, sendMessage);
     } catch (error) {
-      console.error('Error calling Simsimi:', error);
+      console.error('Error calling sim:', error);
       sendMessage(senderId, { text: 'Please enter your question' }, pageAccessToken);
     }
   }
