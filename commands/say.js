@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { sendMessage } = require("./sendMessage"); // Correctly import sendMessage
+const { sendMessage } = require("../handles/sendMessage"); // Correctly import sendMessage
 
 console.log("sendMessage function:", sendMessage); // Debug line to check if sendMessage is loaded
 
