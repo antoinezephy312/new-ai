@@ -7,11 +7,11 @@ module.exports = {
   role: 1,
   author: "developer",
 
-  async execute(senderId, args, pageAccessToken, sendMessage) {
+  async execute(senderId, args, pageAccessToken, messageSender) { // Renamed parameter to `messageSender`
     const prompt = args.join(" ");
 
     if (!prompt) {
-      return sendMessage(senderId, {
+      return messageSender(senderId, {  // Use `messageSender` instead of `sendMessage`
         text: `Usage: say [your message]`
       }, pageAccessToken);
     }
@@ -21,7 +21,7 @@ module.exports = {
       const apiUrl = `https://joshweb.click/api/aivoice?q=${encodeURIComponent(prompt)}&id=8`;
 
       // Send the generated audio file
-      await sendMessage(senderId, {
+      await messageSender(senderId, {  // Again use `messageSender`
         attachment: {
           type: "audio",
           payload: {
@@ -32,7 +32,7 @@ module.exports = {
 
     } catch (error) {
       console.error("Error generating voice message:", error);
-      sendMessage(senderId, {
+      messageSender(senderId, {  // Use `messageSender` here too
         text: `Error generating voice message. Please try again or check your input.`
       }, pageAccessToken);
     }
