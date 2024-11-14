@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { sendMessage } = require("./sendMessage"); // Correctly import sendMessage
+const { sendMessage } = require("../handles/sendMessage"); // Correctly import sendMessage
 
 module.exports = {
   name: "uid",
