@@ -14,17 +14,29 @@ module.exports = {
       return sendMessage(senderId, { text: '🌟 Hello, is there any question? How Can I help You?' }, pageAccessToken);
     }
 
-    const apiUrl = `https://appjonellccapis.zapto.org/api/gpt4turbo?q=${encodeURIComponent(prompt)}&id=${senderId}`;
+    const apiUrl = `https://appjonellccapis.zapto.org/api/gpt4turbo?q=${encodeURIComponent(prompt)}&id=12`;
 
     try {
       const response = await axios.get(apiUrl);
       const rawResponse = response.data.response || '';
 
-      // Extract JSON content and parse it
+      // Attempt to locate JSON part of the response
       const jsonStart = rawResponse.indexOf('{');
       const jsonEnd = rawResponse.lastIndexOf('}') + 1;
+      
+      if (jsonStart === -1 || jsonEnd === -1) {
+        throw new Error("JSON content not found in response.");
+      }
+
       const jsonString = rawResponse.substring(jsonStart, jsonEnd);
-      const parsedData = JSON.parse(jsonString);
+
+      let parsedData;
+      try {
+        parsedData = JSON.parse(jsonString);
+      } catch (jsonError) {
+        console.error("Error parsing JSON:", jsonError);
+        throw new Error("Failed to parse JSON content.");
+      }
       
       const text = parsedData.prompt || 'No response received. Please try again later.';
 
