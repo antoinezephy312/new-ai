@@ -9,9 +9,9 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) { // Removed `sendMessage` parameter here
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://rest-api-production-5054.up.railway.app/aidetect?text=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://joshweb.click/ai-detect?q=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const text = response.data.cleaned_result.message;
+      const text = response.data.result;
 
       // Send the response, split into chunks if necessary
       await sendResponseInChunks(senderId, text, pageAccessToken);
