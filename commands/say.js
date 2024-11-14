@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: "say",
@@ -7,11 +6,11 @@ module.exports = {
   role: 1,
   author: "developer",
 
-  async execute(senderId, args, pageAccessToken, messageSender) { // Renamed parameter to `messageSender`
+  async execute(senderId, args, pageAccessToken, sendMessage) {
     const prompt = args.join(" ");
 
     if (!prompt) {
-      return messageSender(senderId, {  // Use `messageSender` instead of `sendMessage`
+      return sendMessage(senderId, {
         text: `Usage: say [your message]`
       }, pageAccessToken);
     }
@@ -21,7 +20,7 @@ module.exports = {
       const apiUrl = `https://joshweb.click/api/aivoice?q=${encodeURIComponent(prompt)}&id=8`;
 
       // Send the generated audio file
-      await messageSender(senderId, {  // Again use `messageSender`
+      await sendMessage(senderId, {
         attachment: {
           type: "audio",
           payload: {
@@ -32,7 +31,7 @@ module.exports = {
 
     } catch (error) {
       console.error("Error generating voice message:", error);
-      messageSender(senderId, {  // Use `messageSender` here too
+      sendMessage(senderId, {
         text: `Error generating voice message. Please try again or check your input.`
       }, pageAccessToken);
     }
