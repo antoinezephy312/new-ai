@@ -1,0 +1,91 @@
+const axios = require("axios");
+const { sendMessage } = require('../handles/sendMessage');
+
+module.exports = {
+  name: "gemini",
+  description: "Gemini AI",
+  role: 1,
+  author: "Kiana",
+
+  async execute(chilli, pogi, kalamansi, event) {
+    const kalamansiPrompt = pogi.join(" ");
+
+    if (!kalamansiPrompt) {
+      return sendMessage(chilli, { text: "Please enter your question or image to describe." }, kalamansi);
+    }
+
+    try {
+      const imageUrl = await extractImageUrl(event, kalamansi);
+
+      const apiUrl = `https://joshweb.click/gemini`;
+      const response = await handleImageRecognition(apiUrl, kalamansiPrompt, imageUrl);
+      const result = response.gemini;
+
+      const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
+      sendLongMessage(chilli, visionResponse, kalamansi);
+
+    } catch (error) {
+      console.error("Error in Gemini command:", error);
+      sendMessage(chilli, { text: `Error: ${error.message || "Something went wrong."}` }, kalamansi);
+    }
+  }
+};
+
+async function handleImageRecognition(apiUrl, prompt, imageUrl) {
+  try {
+    const { data } = await axios.get(apiUrl, {
+      params: {
+        prompt,
+        url: imageUrl || ""
+      }
+    });
+    return data;
+  } catch (error) {
+    throw new Error("Failed to connect to the Gemini API.");
+  }
+}
+
+async function extractImageUrl(event, kalamansi) {
+  try {
+    if (event.message.reply_to?.mid) {
+      return await getRepliedImage(event.message.reply_to.mid, kalamansi);
+    } else if (event.message?.attachments?.[0]?.type === 'image') {
+      return event.message.attachments[0].payload.url;
+    }
+  } catch (error) {
+    console.error("Failed to extract image URL:", error);
+  }
+  return "";
+}
+
+async function getRepliedImage(mid, kalamansi) {
+  try {
+    const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
+      params: { access_token: kalamansi }
+    });
+    return data?.data[0]?.image_data?.url || "";
+  } catch (error) {
+    throw new Error("Failed to retrieve replied image.");
+  }
+}
+
+function sendLongMessage(chilli, text, kalamansi) {
+  const maxMessageLength = 2000;
+  const delayBetweenMessages = 1000;
+
+  if (text.length > maxMessageLength) {
+    const messages = splitMessageIntoChunks(text, maxMessageLength);
+    sendMessage(chilli, { text: messages[0] }, kalamansi);
+
+    messages.slice(1).forEach((message, index) => {
+      setTimeout(() => sendMessage(chilli, { text: message }, kalamansi), (index + 1) * delayBetweenMessages);
+    });
+  } else {
+    sendMessage(chilli, { text }, kalamansi);
+  }
+}
+
+function splitMessageIntoChunks(message, chunkSize) {
+  const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
+  return message.match(regex);
+}
