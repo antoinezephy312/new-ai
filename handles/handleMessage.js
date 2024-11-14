@@ -68,7 +68,7 @@ async function handleMessage(event, pageAccessToken) {
         try {
           await commands.get('ai').execute(senderId, [commandName, ...args], pageAccessToken, sendMessage);
         } catch (error) {
-          sendMessage(senderId, { text: "Hello! Just ask your question directly. No need to include 'AI'." }, pageAccessToken);
+          sendMessage(senderId, { text: "Is there any question? Just ask directly" }, pageAccessToken);
         }
       } else {
         sendMessage(senderId, {
