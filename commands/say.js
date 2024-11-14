@@ -1,48 +1,39 @@
-const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage'); // Ensure the path is correct
+const axios = require("axios");
+const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
-  name: 'say',
-  description: 'Generate a voice message based on your prompt',
-  author: 'Clarence',
+  name: "say",
+  description: "Generate a voice message based on the prompt",
   role: 1,
-  async execute(senderId, args, pageAccessToken) {
-    const prompt = args.join(' ');
+  author: "developer",
 
-    // Check if the prompt is provided
+  async execute(senderId, args, pageAccessToken, sendMessage) {
+    const prompt = args.join(" ");
+
     if (!prompt) {
-      return await sendMessage(senderId, {
+      return sendMessage(senderId, {
         text: `Usage: say [your message]`
       }, pageAccessToken);
     }
 
     try {
-      // Make a request to the voice generation API
-      const apiUrl = 'https://joshweb.click/api/aivoice';
-      const response = await axios.get(apiUrl, {
-        params: {
-          q: prompt,
-          id: 8
-        },
-        responseType: 'arraybuffer'  // Expect the response as raw binary data (audio)
-      });
+      // Generate the full API URL with the prompt included
+      const apiUrl = `https://joshweb.click/api/aivoice?q=${encodeURIComponent(prompt)}&id=8`;
 
-      // Convert the audio buffer to a URL or handle it as needed
-      const audioUrl = `data:audio/mp3;base64,${Buffer.from(response.data, 'binary').toString('base64')}`;
-
-      // Send the voice message as an audio attachment
+      // Send the generated audio file
       await sendMessage(senderId, {
         attachment: {
-          type: 'audio',
+          type: "audio",
           payload: {
-            url: audioUrl
+            url: apiUrl
           }
         }
       }, pageAccessToken);
+
     } catch (error) {
-      console.error('Error generating voice message:', error);
-      await sendMessage(senderId, {
-        text: `Error generating voice message. Please try again later.`
+      console.error("Error generating voice message:", error);
+      sendMessage(senderId, {
+        text: `Error generating voice message. Please try again or check your input.`
       }, pageAccessToken);
     }
   }
