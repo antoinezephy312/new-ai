@@ -14,34 +14,30 @@ module.exports = {
       return sendMessage(senderId, { text: '🌟 Hello, is there any question? How Can I help You?' }, pageAccessToken);
     }
 
-    const apiUrl = `https://rest-api-production-5054.up.railway.app/ai?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
+    const apiUrl = `https://appjonellccapis.zapto.org/api/gpt4turbo?q=${encodeURIComponent(prompt)}&id=12`;
 
     try {
       const response = await axios.get(apiUrl);
-      const text = response.data.message || 'No response received from GPT-4o. Please try again later.';
-      const attachments = response.data.attachments || [];
+      const responseData = response.data.response || '{}';
+      const parsedData = JSON.parse(responseData);
+      
+      const text = parsedData.prompt || 'No response received. Please try again later.';
+      const imageUrl = responseData.includes('![image](') ? responseData.match(/\!\[image\]\((.*?)\)/)[1] : null;
 
+      // Send the generated text response
       await sendMessage(senderId, { text }, pageAccessToken);
 
-      if (attachments.length > 0) {
-        const attachmentMessages = attachments.map(att => {
-          if (att.type === 'image') {
-            return {
-              attachment: {
-                type: 'image',
-                payload: {
-                  url: att.url,
-                  is_reusable: true
-                }
-              }
-            };
+      // If there is an image URL, send it as an attachment
+      if (imageUrl) {
+        await sendMessage(senderId, {
+          attachment: {
+            type: 'image',
+            payload: {
+              url: imageUrl,
+              is_reusable: true
+            }
           }
-          return null; // Handle other attachment types if needed
-        }).filter(msg => msg !== null);
-
-        for (let attachmentMessage of attachmentMessages) {
-          await sendMessage(senderId, attachmentMessage, pageAccessToken);
-        }
+        }, pageAccessToken);
       }
 
     } catch (error) {
@@ -50,4 +46,3 @@ module.exports = {
     }
   }
 };
-                                                   
