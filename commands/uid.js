@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { sendMessage } = require("./sendMessage"); // Correctly import sendMessage
 
 module.exports = {
   name: "uid",
@@ -6,13 +7,14 @@ module.exports = {
   role: 1,
   author: "Clarence",
 
-  async execute(senderId, args, pageAccessToken, sendMessage) {
+  async execute(senderId, args, pageAccessToken) {
     const profileUrl = args.join(" ");
 
     if (!profileUrl) {
-      return sendMessage(senderId, {
+      await sendMessage(senderId, {
         text: `Usage: findid [Facebook profile URL]`
       }, pageAccessToken);
+      return;
     }
 
     try {
@@ -32,10 +34,9 @@ module.exports = {
       } else {
         throw new Error("Unable to retrieve Facebook ID");
       }
-
     } catch (error) {
       console.error("Error retrieving Facebook ID:", error);
-      sendMessage(senderId, {
+      await sendMessage(senderId, {
         text: `Error retrieving Facebook ID. Please try again or check your input.`
       }, pageAccessToken);
     }
