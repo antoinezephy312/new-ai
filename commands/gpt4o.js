@@ -18,11 +18,19 @@ module.exports = {
 
     try {
       const response = await axios.get(apiUrl);
-      const responseData = response.data.response || '{}';
-      const parsedData = JSON.parse(responseData);
+      const rawResponse = response.data.response || '';
+
+      // Extract JSON content and parse it
+      const jsonStart = rawResponse.indexOf('{');
+      const jsonEnd = rawResponse.lastIndexOf('}') + 1;
+      const jsonString = rawResponse.substring(jsonStart, jsonEnd);
+      const parsedData = JSON.parse(jsonString);
       
       const text = parsedData.prompt || 'No response received. Please try again later.';
-      const imageUrl = responseData.includes('![image](') ? responseData.match(/\!\[image\]\((.*?)\)/)[1] : null;
+
+      // Extract image URL from Markdown syntax
+      const imageUrlMatch = rawResponse.match(/\!\[image\]\((.*?)\)/);
+      const imageUrl = imageUrlMatch ? imageUrlMatch[1] : null;
 
       // Send the generated text response
       await sendMessage(senderId, { text }, pageAccessToken);
