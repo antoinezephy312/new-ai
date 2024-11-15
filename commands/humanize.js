@@ -1,11 +1,12 @@
 const axios = require('axios');
+const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: 'humanize',
   description: 'humanize your AI written works',
   author: 'Clarence',
   role: 1,
-  async execute(senderId, args, pageAccessToken, sendMessage) {
+  async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
     try {
       const apiUrl = `https://appjonellccapis.zapto.org/api/aihuman?text=${encodeURIComponent(prompt)}`;
@@ -45,7 +46,7 @@ function splitMessageIntoChunks(message, chunkSize) {
     }
     chunk += `${word} `;
   }
-  
+
   if (chunk) {
     chunks.push(chunk.trim());
   }
