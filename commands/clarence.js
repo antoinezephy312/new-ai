@@ -10,7 +10,7 @@ module.exports = {
     const prompt = args.join(' ');
 
     try {
-      const apiUrl = `https://rest-api-french.onrender.com/api/clarencev2?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
+      const apiUrl = `https://rest-api-french.onrender.com2/api/clarencev2?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
       const response = await axios.get(apiUrl);
       const text = response.data.response;
 
