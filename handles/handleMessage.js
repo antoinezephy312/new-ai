@@ -56,7 +56,7 @@ async function handleMessage(event, pageAccessToken) {
 
         await command.execute(senderId, args, pageAccessToken, event, imageUrl);
       } catch (error) {
-        if (commandName === 'ai') {
+        if (commandName === 'clarence') {
           sendMessage(senderId, { text: "Hello! Just ask your question directly. No need to include 'AI'." }, pageAccessToken);
         } else {
           console.error(`Error executing command "${commandName}":`, error);
@@ -64,9 +64,9 @@ async function handleMessage(event, pageAccessToken) {
         }
       }
     } else {
-      if (commands.has('ai')) {
+      if (commands.has('clarence')) {
         try {
-          await commands.get('ai').execute(senderId, [commandName, ...args], pageAccessToken, sendMessage);
+          await commands.get('clarence').execute(senderId, [commandName, ...args], pageAccessToken, sendMessage);
         } catch (error) {
           sendMessage(senderId, { text: "Is there any question? Just ask directly" }, pageAccessToken);
         }
