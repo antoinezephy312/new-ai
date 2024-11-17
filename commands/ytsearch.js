@@ -24,19 +24,9 @@ module.exports = {
       // Get the first video from the search results
       const videoData = videos[0];
 
-      const message = `🎥 YouTube Search Result:\n\n📹 Title: ${videoData.title}\n🕒 Duration: ${videoData.duration.timestamp}\n👤 Channel: ${videoData.author.name}\n🔗 Channel URL: ${videoData.author.url}\n👁️ Views: ${videoData.views.toLocaleString()}\n\n🔗 Video URL: ${videoData.url}`;
+      const message = `🎥 YouTube Search Result:\n\n📹 Title: ${videoData.title}\n🕒 Duration: ${videoData.duration.timestamp}\n👤 Channel: ${videoData.author.name}\n🔗 Channel URL: ${videoData.author.url}\n👁️ Views: ${videoData.views.toLocaleString()}\n\n🔗 Watch Video: ${videoData.url}`;
 
       sendMessage(senderId, { text: message }, pageAccessToken);
-
-      sendMessage(senderId, {
-        attachment: {
-          type: 'image',
-          payload: {
-            url: videoData.thumbnail,
-            is_reusable: true
-          }
-        }
-      }, pageAccessToken);
     } catch (error) {
       console.error('Error:', error);
       sendMessage(senderId, { text: "An error occurred while processing the request." }, pageAccessToken);
