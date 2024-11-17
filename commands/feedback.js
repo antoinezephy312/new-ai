@@ -1,5 +1,4 @@
-const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage'); // Import sendMessage correctly
+const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: 'feedback',
@@ -16,15 +15,13 @@ module.exports = {
 
     // Combine args to form the feedback message
     const feedbackMessage = args.join(' ');
+    const adminId = '100029573642160';  // Replace this with your actual Facebook ID
 
     try {
-      // Admin Messenger endpoint
-      const adminMessengerUrl = 'https://www.facebook.com/messages/t/100029573642160';
-
-      // Send feedback message (simulate sending to admin URL)
-      await axios.post(adminMessengerUrl, {
-        message: `Feedback from user ${senderId}:\n\n${feedbackMessage}`
-      });
+      // Send the feedback message to the admin
+      await sendMessage(adminId, {
+        text: `Feedback from user ${senderId}:\n\n${feedbackMessage}`
+      }, pageAccessToken);
 
       // Confirm feedback sent to the user
       await sendMessage(senderId, {
