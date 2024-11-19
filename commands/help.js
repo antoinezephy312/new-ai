@@ -49,29 +49,12 @@ module.exports = {
     // Format help message with emojis for better readability
     const helpTextMessage = `🚀 **Commands List** (Page ${page}/${totalPages})\n📜 **Total Commands**: ${totalCommands}\n\n${commandsForPage.map((cmd, index) => `${startIndex + index + 1}. ${cmd.title}\n📝 ${cmd.description}`).join('\n\n')}\n\n📌 **Tip**: Use "help [page]" to switch pages, or "help all" to see all commands!`;
 
-    // Generate quick replies with pagination options
-    const quickReplies = [
-      ...commandsForPage.map((cmd) => ({
-        content_type: "text",
-        title: cmd.title.replace('✨ ', ''), // Cleaner title for quick replies
-        payload: cmd.payload
-      })),
-      ...(page > 1 ? [{
-        content_type: "text",
-        title: "⬅️ Previous",
-        payload: `HELP_${page - 1}`
-      }] : []),
-      ...(page < totalPages ? [{
-        content_type: "text",
-        title: "➡️ Next",
-        payload: `HELP_${page + 1}`
-      }] : []),
-      {
-        content_type: "text",
-        title: "🏠 Main Menu",
-        payload: "MAIN_MENU"
-      }
-    ];
+    // Generate quick replies only for available commands
+    const quickReplies = commandsForPage.map((cmd) => ({
+      content_type: "text",
+      title: cmd.title.replace('✨ ', ''), // Cleaner title for quick replies
+      payload: cmd.payload
+    }));
 
     // Send the formatted help message with quick replies
     sendMessage(senderId, {
