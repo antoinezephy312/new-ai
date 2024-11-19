@@ -17,7 +17,7 @@ module.exports = {
       await sendResponseInChunks(senderId, text, pageAccessToken, sendMessage);
     } catch (error) {
       console.error('Error calling Humanize AI:', error);
-      sendMessage(senderId, { text: 'Please enter your question' }, pageAccessToken);
+      sendMessage(senderId, { text: 'An Error Occured' }, pageAccessToken);
     }
   }
 };
