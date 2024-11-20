@@ -16,7 +16,7 @@ module.exports = {
       await sendResponseInChunks(senderId, text, pageAccessToken, sendMessage);
     } catch (error) {
       console.error('Error calling Ai:', error);
-      sendMessage(senderId, { text: 'Please enter your question' }, pageAccessToken);
+      sendMessage(senderId, { text: 'An Error occured' }, pageAccessToken);
     }
   }
 };
