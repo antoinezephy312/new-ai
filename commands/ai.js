@@ -8,9 +8,9 @@ module.exports = {
   async execute(senderId, args, pageAccessToken, sendMessage) {
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://rest-api-french2.onrender.com/api/clarencev2?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
+      const apiUrl = `https://chat-gpt-master.onrender.com/api/hercai?question=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const text = response.data.response;
+      const text = response.data.reply;
 
       // Send the response, split into chunks if necessary
       await sendResponseInChunks(senderId, text, pageAccessToken, sendMessage);
