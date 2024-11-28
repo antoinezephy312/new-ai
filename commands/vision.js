@@ -16,10 +16,11 @@ module.exports = {
 
     try {
       const imageUrl = await extractImageUrl(event, kalamansi);
+      const senderId = event.sender.id;
 
-      const apiUrl = `https://joshweb.click/gemini`;
-      const response = await handleImageRecognition(apiUrl, kalamansiPrompt, imageUrl);
-      const result = response.gemini;
+      const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
+      const response = await handleImageRecognition(apiUrl, kalamansiPrompt, imageUrl, senderId);
+      const result = response.response;
 
       const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
       sendLongMessage(chilli, visionResponse, kalamansi);
@@ -31,12 +32,13 @@ module.exports = {
   }
 };
 
-async function handleImageRecognition(apiUrl, prompt, imageUrl) {
+async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
   try {
     const { data } = await axios.get(apiUrl, {
       params: {
-        prompt,
-        url: imageUrl || ""
+        q: prompt,
+        uid: senderId,
+        imageUrl: imageUrl || ""
       }
     });
     return data;
