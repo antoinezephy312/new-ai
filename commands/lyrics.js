@@ -10,7 +10,7 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) {
     const query = args.join(' ');
     try {
-      const apiUrl = `https://joshweb.click/search/lyrics?q=${encodeURIComponent(query)}`;
+      const apiUrl = `https://clarence-rest-apiv2.onrender.com/api/lyrics?query=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
       const result = response.data.result;
 
