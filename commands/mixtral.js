@@ -14,14 +14,14 @@ module.exports = {
       return sendMessage(senderId, { text: 'Hello I\'m Mixtral AI, how can I assist you today?' }, pageAccessToken);
     }
 
-    const apiUrl = `https://joshweb.click/api/mixtral-8b?q=${encodeURIComponent(query)}`;
+    const apiUrl = `https://new-rest-api2.onrender.com/api/mixtral-8b?q=${encodeURIComponent(query)}`;
 
     try {
       const response = await axios.get(apiUrl);
-      const { status, result } = response.data;
+      const { response: apiResponse } = response.data;
 
-      if (status) {
-        const formattedResponse = `🤖 𝗠𝗜𝗫𝗧𝗥𝗔𝗟 𝗔𝗜\n\n${result}`;
+      if (apiResponse) { // Check if 'response' exists in the API response
+        const formattedResponse = `🤖 𝗠𝗜𝗫𝗧𝗥𝗔𝗟 𝗔𝗜\n\n${apiResponse}`;
         await sendResponseInChunks(senderId, formattedResponse, pageAccessToken);
       } else {
         await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
