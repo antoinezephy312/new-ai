@@ -7,7 +7,7 @@ module.exports = {
   role: 1,
   author: "Kiana",
 
-  async execute(chilli, pogi, kalamansi, event) {
+  async execute(chilli, args, kalamansi, event) {
     if (!event?.sender?.id) {
       console.error('Invalid event object: Missing sender ID.');
       sendMessage(chilli, { text: 'Error: Missing sender ID.' }, kalamansi);
@@ -15,9 +15,9 @@ module.exports = {
     }
 
     const senderId = event.sender.id;
-    const kalamansiPrompt = pogi.join(" ");
+    const userPrompt = args.join(" ");
 
-    if (!kalamansiPrompt && !event.message.reply_to?.mid) {
+    if (!userPrompt && !event.message.reply_to?.mid) {
       return sendMessage(chilli, { text: "Please enter your question or reply with an image to analyze." }, kalamansi);
     }
 
@@ -27,7 +27,7 @@ module.exports = {
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
         const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
-        const response = await handleImageRecognition(apiUrl, kalamansiPrompt, imageUrl, senderId);
+        const response = await handleImageRecognition(apiUrl, userPrompt, imageUrl, senderId);
         const result = response.response;
 
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
@@ -37,7 +37,7 @@ module.exports = {
         const apiUrl = `https://clarence-rest-apiv2.onrender.com/api/gpt4o1`;
         const response = await axios.get(apiUrl, {
           params: {
-            prompt: kalamansiPrompt,
+            prompt: userPrompt,
             uid: senderId
           }
         });
