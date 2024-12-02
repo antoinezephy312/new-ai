@@ -2,7 +2,7 @@ const axios = require("axios");
 const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
-  name: "gemini",
+  name: "ai",
   description: "Gemini AI",
   role: 1,
   author: "Kiana",
@@ -37,7 +37,7 @@ module.exports = {
         });
         const gptMessage = response.data.message;
 
-        const gptResponse = `🤖 𝐆𝐏𝐓-𝐀𝐧𝐬𝐰𝐞𝐫\n━━━━━━━━━━━━━━━━━━\n${gptMessage}`;
+        const gptResponse = `${gptMessage}`;
         sendLongMessage(chilli, gptResponse, kalamansi);
       }
     } catch (error) {
