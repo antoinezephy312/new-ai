@@ -8,6 +8,14 @@ module.exports = {
   author: "Kiana",
 
   async execute(chilli, pogi, kalamansi, event) {
+    console.log("Received event object:", JSON.stringify(event, null, 2));
+
+    // Check if event and its properties are valid
+    if (!event || !event.message) {
+      console.error("Invalid event object received:", JSON.stringify(event, null, 2));
+      return sendMessage(chilli, { text: "Error: Invalid event data received." }, kalamansi);
+    }
+
     const kalamansiPrompt = pogi.join(" ");
 
     if (!kalamansiPrompt && !event.message.reply_to?.mid) {
@@ -16,9 +24,8 @@ module.exports = {
 
     try {
       const imageUrl = await extractImageUrl(event, kalamansi);
+      const senderId = event?.sender?.id || "unknown_user";
 
-      // Check if sender and sender.id exist
-      const senderId = event.sender?.id || "unknown_user";
       if (senderId === "unknown_user") {
         console.error("Sender ID is undefined. Event object:", JSON.stringify(event, null, 2));
         return sendMessage(chilli, { text: "Unable to identify the sender. Please try again." }, kalamansi);
@@ -70,15 +77,15 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
 
 async function extractImageUrl(event, kalamansi) {
   try {
-    if (event.message.reply_to?.mid) {
+    if (event?.message?.reply_to?.mid) {
       return await getRepliedImage(event.message.reply_to.mid, kalamansi);
-    } else if (event.message?.attachments?.[0]?.type === 'image') {
+    } else if (event?.message?.attachments?.[0]?.type === 'image') {
       return event.message.attachments[0].payload.url;
     }
   } catch (error) {
     console.error("Failed to extract image URL:", error);
   }
-  return "";
+  return ""; // Default to empty string if no image is found
 }
 
 async function getRepliedImage(mid, kalamansi) {
