@@ -10,21 +10,36 @@ module.exports = {
   async execute(chilli, pogi, kalamansi, event) {
     const kalamansiPrompt = pogi.join(" ");
 
-    if (!kalamansiPrompt) {
-      return sendMessage(chilli, { text: "Please enter your question or image to describe." }, kalamansi);
+    if (!kalamansiPrompt && !event.message.reply_to?.mid) {
+      return sendMessage(chilli, { text: "Please enter your question or reply with an image to analyze." }, kalamansi);
     }
 
     try {
       const imageUrl = await extractImageUrl(event, kalamansi);
       const senderId = event.sender.id;
 
-      const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
-      const response = await handleImageRecognition(apiUrl, kalamansiPrompt, imageUrl, senderId);
-      const result = response.response;
+      if (imageUrl) {
+        // If an image is detected, use Gemini Vision API
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
+        const response = await handleImageRecognition(apiUrl, kalamansiPrompt, imageUrl, senderId);
+        const result = response.response;
 
-      const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
-      sendLongMessage(chilli, visionResponse, kalamansi);
+        const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
+        sendLongMessage(chilli, visionResponse, kalamansi);
+      } else {
+        // If no image, use GPT API
+        const apiUrl = `https://clarence-rest-apiv2.onrender.com/api/gpt4o1`;
+        const response = await axios.get(apiUrl, {
+          params: {
+            prompt: kalamansiPrompt,
+            uid: senderId
+          }
+        });
+        const gptMessage = response.data.message;
 
+        const gptResponse = `🤖 𝐆𝐏𝐓-𝐀𝐧𝐬𝐰𝐞𝐫\n━━━━━━━━━━━━━━━━━━\n${gptMessage}`;
+        sendLongMessage(chilli, gptResponse, kalamansi);
+      }
     } catch (error) {
       console.error("Error in Gemini command:", error);
       sendMessage(chilli, { text: `Error: ${error.message || "Something went wrong."}` }, kalamansi);
@@ -43,7 +58,7 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
     });
     return data;
   } catch (error) {
-    throw new Error("Failed to connect to the Gemini API.");
+    throw new Error("Failed to connect to the Gemini Vision API.");
   }
 }
 
