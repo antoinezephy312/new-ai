@@ -43,7 +43,7 @@ module.exports = {
         });
         const gptMessage = response.data.message;
 
-        const gptResponse = `🤖 𝐆𝐏𝐓-𝐀𝐧𝐬𝐰𝐞𝐫\n━━━━━━━━━━━━━━━━━━\n${gptMessage}`;
+        const gptResponse = `${gptMessage}`;
         sendLongMessage(chilli, gptResponse, kalamansi);
       }
     } catch (error) {
