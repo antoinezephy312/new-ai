@@ -32,6 +32,7 @@ async function handleMessage(event, pageAccessToken) {
 
     console.log(`Parsed command: ${commandName} with arguments: ${args}`);
 
+    // Check if the command exists
     if (commands.has(commandName)) {
       const command = commands.get(commandName);
 
@@ -56,31 +57,21 @@ async function handleMessage(event, pageAccessToken) {
 
         await command.execute(senderId, args, pageAccessToken, event, imageUrl);
       } catch (error) {
-        if (commandName === 'ai') {
-          sendMessage(senderId, { text: "Hello! Just ask your question directly. No need to include 'AI'." }, pageAccessToken);
-        } else {
-          console.error(`Error executing command "${commandName}":`, error);
-          sendMessage(senderId, { text: 'There was an error executing that command.' }, pageAccessToken);
-        }
+        console.error(`Error executing command "${commandName}":`, error);
+        sendMessage(senderId, { text: 'There was an error executing that command.' }, pageAccessToken);
       }
     } else {
-      if (commands.has('ai')) {
+      // If the command is not recognized, default to the "ai" command
+      const defaultCommand = commands.get('ai');
+      if (defaultCommand) {
         try {
-          await commands.get('ai').execute(senderId, [commandName, ...args], pageAccessToken, event, imageUrl);
+          await defaultCommand.execute(senderId, [messageText], pageAccessToken, event);
         } catch (error) {
-          sendMessage(senderId, { text: "Is there any question? Just ask directly" }, pageAccessToken);
+          console.error('Error executing default "ai" command:', error);
+          sendMessage(senderId, { text: 'There was an error processing your request.' }, pageAccessToken);
         }
       } else {
-        sendMessage(senderId, {
-          text: `Unknown command: "${commandName}". Type "help" or click help below for a list of available commands.`,
-          quick_replies: [
-            {
-              content_type: "text",
-              title: "Help",
-              payload: "HELP_PAYLOAD"
-            }
-          ]
-        }, pageAccessToken);
+        sendMessage(senderId, { text: "Sorry, I couldn't understand that. Please try again." }, pageAccessToken);
       }
     }
   } else {
