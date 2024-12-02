@@ -2,12 +2,19 @@ const axios = require("axios");
 const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
-  name: "gemini",
+  name: "ai",
   description: "Gemini AI",
   role: 1,
   author: "Kiana",
 
   async execute(chilli, pogi, kalamansi, event) {
+    if (!event?.sender?.id) {
+      console.error('Invalid event object: Missing sender ID.');
+      sendMessage(chilli, { text: 'Error: Missing sender ID.' }, kalamansi);
+      return;
+    }
+
+    const senderId = event.sender.id;
     const kalamansiPrompt = pogi.join(" ");
 
     if (!kalamansiPrompt && !event.message.reply_to?.mid) {
@@ -16,7 +23,6 @@ module.exports = {
 
     try {
       const imageUrl = await extractImageUrl(event, kalamansi);
-      const senderId = event.sender.id;
 
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
