@@ -16,7 +16,13 @@ module.exports = {
 
     try {
       const imageUrl = await extractImageUrl(event, kalamansi);
-      const senderId = event.sender.id;
+
+      // Check if sender and sender.id exist
+      const senderId = event.sender?.id || "unknown_user";
+      if (senderId === "unknown_user") {
+        console.error("Sender ID is undefined. Event object:", JSON.stringify(event, null, 2));
+        return sendMessage(chilli, { text: "Unable to identify the sender. Please try again." }, kalamansi);
+      }
 
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
