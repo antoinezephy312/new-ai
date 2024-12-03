@@ -34,7 +34,7 @@ module.exports = {
         sendLongMessage(chilli, visionResponse, kalamansi);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://clarence-rest-apiv2.onrender.com/api/gpt4o1`;
+        const apiUrl = `https://clarence-rest-apiv1.onrender.com/api/gpt4o1`;
         const response = await axios.get(apiUrl, {
           params: {
             prompt: userPrompt,
