@@ -3,7 +3,7 @@ const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: "ai",
-  description: "Gemini AI",
+  description: "Gpt4o x Gemini AI",
   role: 1,
   author: "Kiana",
 
