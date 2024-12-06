@@ -1,14 +1,14 @@
 const axios = require('axios');
 
 module.exports = {
-  name: 'ai',
+  name: 'blackbox',
   description: 'Ask a question to the Ai',
   author: 'Clarence',
   role: 1,
   async execute(senderId, args, pageAccessToken, sendMessage) {
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://rest-api-french2.onrender.com/api/clarencev2?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
+      const apiUrl = `https://kaiz-apis.gleeze.com/api/blackbox?q=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
       const text = response.data.response;
 
