@@ -16,7 +16,7 @@ module.exports = {
     }
 
     try {
-      const apiUrl = `https://clarence-rest-apiv2.onrender.com/api/pinterest?query=${encodeURIComponent(query)}`;
+      const apiUrl = `https://clarence-rest-apiv1.onrender.com/api/pinterest?query=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
       const images = response.data.result;
 
