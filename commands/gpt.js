@@ -16,7 +16,7 @@ module.exports = {
       }, pageAccessToken);
     }
 
-    const apiUrl = `https://api.kenliejugarap.com/blackbox-gpt4o/?text=${encodeURIComponent(prompt)};
+    const apiUrl = `https://api.kenliejugarap.com/blackbox-pro/?text=${encodeURIComponent(prompt)}`;
 
     try {
       const response = await axios.get(apiUrl);
