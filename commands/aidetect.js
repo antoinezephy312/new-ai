@@ -6,15 +6,18 @@ module.exports = {
   description: 'Detect if a text was written by an AI or a human',
   author: 'Clarence',
   role: 1,
-  async execute(senderId, args, pageAccessToken) { // Removed `sendMessage` parameter here
+  async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://joshweb.click/ai-detect?q=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://kaiz-apis.gleeze.com/api/aidetector-v2?q=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const text = response.data.result;
+      const { ai, human, message } = response.data;
+
+      // Create the full response
+      const fullResponse = `AI Generated: ${ai}\nHuman Generated: ${human}\nMessage: ${message}`;
 
       // Send the response, split into chunks if necessary
-      await sendResponseInChunks(senderId, text, pageAccessToken);
+      await sendResponseInChunks(senderId, fullResponse, pageAccessToken);
     } catch (error) {
       console.error('Error calling AI Detection API:', error);
       await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
