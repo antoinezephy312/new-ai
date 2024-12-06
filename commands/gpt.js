@@ -2,47 +2,35 @@ const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
-  name: 'gpt',
-  description: 'Ask a question to GPT model',
+  name: 'blackbox',
+  description: 'Ask a question to the GPT-3.5 Turbo',
   role: 1,
   author: 'Kiana',
-  
+
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ').trim();
-    
+
     if (!prompt) {
-      return sendMessage(senderId, { text: ' Hello there! How can I Help you today?' }, pageAccessToken);
+      return sendMessage(senderId, {
+        text: 'Hello I am Neko, how can I help you?'
+      }, pageAccessToken);
     }
 
-    const apiUrl = `https://rest-api-production-5054.up.railway.app/gpt4om?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
+    const apiUrl = `https://kaiz-apis.gleeze.com/api/blackbox?q=${encodeURIComponent(prompt)}&uid=${senderId}`;
 
     try {
       const response = await axios.get(apiUrl);
-      const text = response.data.message || 'Sorry, no valid response was received from GPT-4 API.';
-      const maxMessageLength = 2000;
+      const reply = response.data.response;
 
-      const formattedResponse = 
-`🌟 𝗚𝗣𝗧-𝗠𝗢𝗗𝗘𝗟\n\n${text}`;
-
-      if (formattedResponse.length > maxMessageLength) {
-        const messages = splitMessageIntoChunks(formattedResponse, maxMessageLength);
-        for (const message of messages) {
-          await sendMessage(senderId, { text: message }, pageAccessToken);
-        }
-      } else {
+      if (reply) {
+        const formattedResponse = `🌟 𝗚𝗣𝗧-𝟯.𝟱 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲:\n\n${reply}`;
         await sendMessage(senderId, { text: formattedResponse }, pageAccessToken);
+      } else {
+        await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
       }
     } catch (error) {
-      console.error('Error calling GPT-4 API:', error);
+      console.error('Error calling GPT-3.5 Turbo API:', error);
       await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
     }
   }
 };
-
-function splitMessageIntoChunks(message, chunkSize) {
-  const chunks = [];
-  for (let i = 0; i < message.length; i += chunkSize) {
-    chunks.push(message.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
