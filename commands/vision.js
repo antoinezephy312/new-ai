@@ -34,7 +34,7 @@ module.exports = {
         sendLongMessage(chilli, visionResponse, kalamansi);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/gpt-4o`;
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/claude-sonnet-3.5`;
         const response = await axios.get(apiUrl, {
           params: {
             q: userPrompt,
