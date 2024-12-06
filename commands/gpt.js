@@ -3,7 +3,7 @@ const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: 'blackbox',
-  description: 'Ask a question to the GPT-3.5 Turbo',
+  description: 'Ask a question to the blackbox ai',
   role: 1,
   author: 'Kiana',
 
@@ -23,7 +23,7 @@ module.exports = {
       const reply = response.data.response;
 
       if (reply) {
-        const formattedResponse = `🌟 𝗚𝗣𝗧-𝟯.𝟱 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲:\n\n${reply}`;
+        const formattedResponse = `💻📦 𝗕𝗹𝗮𝗰𝗸𝗯𝗼𝘅 𝗔𝗜 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲:\n\n${reply}`;
         await sendMessage(senderId, { text: formattedResponse }, pageAccessToken);
       } else {
         await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
