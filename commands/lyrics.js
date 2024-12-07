@@ -10,7 +10,7 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) {
     const query = args.join(' ');
     try {
-      const apiUrl = `https://kaiz-apis.gleeze.com/api/lyrics?song=${encodeURIComponent(query)}`;
+      const apiUrl = `https://jerome-web.onrender.com/service/api/lyrics?title=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
       const result = response.data.lyrics;
 
