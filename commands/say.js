@@ -20,7 +20,7 @@ module.exports = {
 
     try {
       // Generate the full API URL with the prompt included
-      const apiUrl = `https://joshweb.click/api/aivoice?q=${encodeURIComponent(prompt)}&id=8`;
+      const apiUrl = `https://api.joshweb.click//api/aivoice?q=${encodeURIComponent(prompt)}&id=8`;
 
       console.log("Sending message with API URL:", apiUrl); // Debug line to confirm URL
 
