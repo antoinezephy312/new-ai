@@ -12,7 +12,7 @@ module.exports = {
     try {
       const apiUrl = `https://api.joshweb.click/search/lyrics?q=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
-      const result = response.data.lyrics;
+      const result = response.data.result; // Fix: Access the 'result' object
 
       if (result && result.lyrics) {
         const lyricsMessage = `Title: ${result.title}\nArtist: ${result.artist}\n\n${result.lyrics}`;
@@ -27,9 +27,9 @@ module.exports = {
               type: 'image',
               payload: {
                 url: result.image,
-                is_reusable: true
-              }
-            }
+                is_reusable: true,
+              },
+            },
           }, pageAccessToken);
         }
       } else {
@@ -40,7 +40,7 @@ module.exports = {
       console.error('Error calling Lyrics API:', error);
       await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
     }
-  }
+  },
 };
 
 // Function to send messages in chunks
