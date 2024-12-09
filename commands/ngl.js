@@ -5,7 +5,7 @@ module.exports = {
   name: 'nglspam',
   description: 'Send spam messages to an NGL username.',
   author: 'Clarence',
-  role: 1,
+  role: 0,
   async execute(senderId, args, pageAccessToken) {
     if (args.length < 3) {
       sendMessage(senderId, { text: 'Usage: nglspam <username> <amount> <message>' }, pageAccessToken);
