@@ -5,7 +5,7 @@ module.exports = {
   name: 'sms',
   description: 'SMS spam',
   author: 'Clarence',
-  role: 0,
+  role: 1,
   async execute(senderId, args, pageAccessToken) {
     if (args.length < 3) {
       sendMessage(senderId, { text: 'Usage: sms <phone> <count> <interval>' }, pageAccessToken);
