@@ -19,7 +19,7 @@ module.exports = {
 
     try {
       // Make a request to the API with the profile URL
-      const res = await axios.get(`https://joshweb.click/api/findid`, {
+      const res = await axios.get(`https://api.joshweb.click/api/findid`, {
         params: { url: profileUrl }
       });
 
