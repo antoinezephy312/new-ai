@@ -18,7 +18,7 @@ function toBoldUnicode(text) {
 }
 
 module.exports = {
-  name: 'wikipedia',
+  name: 'wiki',
   description: 'Fetch a summary from Wikipedia for a given topic',
   author: 'Clarence',
   role: 1,
