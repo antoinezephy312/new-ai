@@ -57,7 +57,7 @@ module.exports = {
         }
 
         // Add the link to the full Wikipedia page with an emoji
-        message += `🔗 *Read more*: [Wikipedia Page](${content_urls.desktop.page})`;
+        message += `🔗 𝗥𝗲𝗮𝗱 𝗺𝗼𝗿𝗲: [Wikipedia Page](${content_urls.desktop.page})`;
 
         // Send the formatted message
         await sendMessage(senderId, { text: message }, pageAccessToken);
