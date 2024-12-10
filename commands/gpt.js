@@ -17,7 +17,7 @@ module.exports = {
       }, pageAccessToken);
     }
 
-    const apiUrl = `https://api.kenliejugarap.com/blackbox-pro/?text=${encodeURIComponent(prompt)}`;
+    const apiUrl = `https://clarence-rest-apiv1.onrender.com/api/blackbox?message=${encodeURIComponent(prompt)}`;
 
     try {
       const response = await axios.get(apiUrl);
