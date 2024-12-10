@@ -1,22 +1,6 @@
 const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
 
-// Function to convert regular text to bold Unicode text
-function toBoldUnicode(text) {
-  return text.split('').map(char => {
-    const code = char.charCodeAt(0);
-    if (code >= 65 && code <= 90) {
-      // Uppercase letter
-      return String.fromCharCode(code + 0x1D400 - 65);
-    } else if (code >= 97 && code <= 122) {
-      // Lowercase letter
-      return String.fromCharCode(code + 0x1D41A - 97);
-    }
-    // Return as is if not a letter
-    return char;
-  }).join('');
-}
-
 module.exports = {
   name: 'wiki',
   description: 'Fetch a summary from Wikipedia for a given topic',
@@ -37,11 +21,8 @@ module.exports = {
       const { title, extract, description, thumbnail, content_urls } = response.data;
 
       if (title && extract) {
-        // Convert title to bold Unicode format
-        const styledTitle = toBoldUnicode(title);
-
         // Start constructing the message with bold title
-        let message = `🌟 ${styledTitle}\n\n`;
+        let message = `🌟 *${title}*\n\n`;
 
         // Add description if available
         if (description) {
@@ -57,7 +38,7 @@ module.exports = {
         }
 
         // Add the link to the full Wikipedia page with an emoji
-        message += `🔗 𝗥𝗲𝗮𝗱 𝗺𝗼𝗿𝗲: [Wikipedia Page](${content_urls.desktop.page})`;
+        message += `🔗 Read more: [Wikipedia Page](${content_urls.desktop.page})`;
 
         // Send the formatted message
         await sendMessage(senderId, { text: message }, pageAccessToken);
