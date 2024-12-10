@@ -13,7 +13,7 @@ module.exports = {
     // Default message if no prompt is provided
     if (!prompt) {
       return sendMessage(senderId, {
-        text: 'Hello! I am Neko, how can I help you?'
+        text: 'Hello! I am Blackbox Ai, how can I help you?'
       }, pageAccessToken);
     }
 
