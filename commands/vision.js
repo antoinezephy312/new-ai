@@ -34,14 +34,14 @@ module.exports = {
         sendLongMessage(chilli, visionResponse, kalamansi);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://api.joshweb.click/ai/neural-chat-7b`;
+        const apiUrl = `https://rest-api-french2.onrender.com/api/clarencev2`;
         const response = await axios.get(apiUrl, {
           params: {
-            q: userPrompt,
+            prompt: userPrompt,
             uid: senderId
           }
         });
-        const gptMessage = response.data.result;
+        const gptMessage = response.data.response;
 
         const gptResponse = `${gptMessage}`;
         sendLongMessage(chilli, gptResponse, kalamansi);
