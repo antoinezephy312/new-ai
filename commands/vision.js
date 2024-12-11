@@ -7,10 +7,10 @@ module.exports = {
   role: 1,
   author: "Kiana",
 
-  async execute(chilli, args, kalamansi, event) {
+  async execute(bot, args, authToken, event) {
     if (!event?.sender?.id) {
       console.error('Invalid event object: Missing sender ID.');
-      sendMessage(chilli, { text: 'Error: Missing sender ID.' }, kalamansi);
+      sendMessage(bot, { text: 'Error: Missing sender ID.' }, authToken);
       return;
     }
 
@@ -18,11 +18,11 @@ module.exports = {
     const userPrompt = args.join(" ");
 
     if (!userPrompt && !event.message.reply_to?.mid) {
-      return sendMessage(chilli, { text: "Please enter your question or reply with an image to analyze." }, kalamansi);
+      return sendMessage(bot, { text: "Please enter your question or reply with an image to analyze." }, authToken);
     }
 
     try {
-      const imageUrl = await extractImageUrl(event, kalamansi);
+      const imageUrl = await extractImageUrl(event, authToken);
 
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
@@ -31,7 +31,7 @@ module.exports = {
         const result = response.response;
 
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
-        sendLongMessage(chilli, visionResponse, kalamansi);
+        sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
         const apiUrl = `https://rest-api-french2.onrender.com/api/clarencev2`;
@@ -44,11 +44,11 @@ module.exports = {
         const gptMessage = response.data.response;
 
         const gptResponse = `${gptMessage}`;
-        sendLongMessage(chilli, gptResponse, kalamansi);
+        sendLongMessage(bot, gptResponse, authToken);
       }
     } catch (error) {
       console.error("Error in Gemini command:", error);
-      sendMessage(chilli, { text: `Error: ${error.message || "Something went wrong."}` }, kalamansi);
+      sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
     }
   }
 };
@@ -68,10 +68,10 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
   }
 }
 
-async function extractImageUrl(event, kalamansi) {
+async function extractImageUrl(event, authToken) {
   try {
     if (event.message.reply_to?.mid) {
-      return await getRepliedImage(event.message.reply_to.mid, kalamansi);
+      return await getRepliedImage(event.message.reply_to.mid, authToken);
     } else if (event.message?.attachments?.[0]?.type === 'image') {
       return event.message.attachments[0].payload.url;
     }
@@ -81,10 +81,10 @@ async function extractImageUrl(event, kalamansi) {
   return "";
 }
 
-async function getRepliedImage(mid, kalamansi) {
+async function getRepliedImage(mid, authToken) {
   try {
     const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
-      params: { access_token: kalamansi }
+      params: { access_token: authToken }
     });
     return data?.data[0]?.image_data?.url || "";
   } catch (error) {
@@ -92,19 +92,19 @@ async function getRepliedImage(mid, kalamansi) {
   }
 }
 
-function sendLongMessage(chilli, text, kalamansi) {
+function sendLongMessage(bot, text, authToken) {
   const maxMessageLength = 2000;
   const delayBetweenMessages = 1000;
 
   if (text.length > maxMessageLength) {
     const messages = splitMessageIntoChunks(text, maxMessageLength);
-    sendMessage(chilli, { text: messages[0] }, kalamansi);
+    sendMessage(bot, { text: messages[0] }, authToken);
 
     messages.slice(1).forEach((message, index) => {
-      setTimeout(() => sendMessage(chilli, { text: message }, kalamansi), (index + 1) * delayBetweenMessages);
+      setTimeout(() => sendMessage(bot, { text: message }, authToken), (index + 1) * delayBetweenMessages);
     });
   } else {
-    sendMessage(chilli, { text }, kalamansi);
+    sendMessage(bot, { text }, authToken);
   }
 }
 
