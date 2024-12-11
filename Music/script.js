@@ -93,7 +93,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
 // Show a loading animation while waiting for the API response
 const showLoadingAnimation = () => {
   const html = `<div class="message-content">
-                  <img class="avatar" src="loading-42.png" alt="Gemini avatar">
+                  <img class="avatar" src="https://github.com/frenchmangigo/Gemini-Chat-bot/blob/master/loading-42.png?raw=true" alt="Gemini avatar">
                   <p class="text"></p>
                   <div class="loading-indicator">
                     <div class="loading-bar"></div>
