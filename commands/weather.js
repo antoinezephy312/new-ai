@@ -3,27 +3,34 @@ const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: 'weather',
-  description: 'Fetch current weather information for Valencia',
+  description: 'Fetch current weather information for a specified city',
   author: 'Clarence',
   role: 1,
 
   async execute(senderId, args, pageAccessToken) {
+    const city = args.join(' ').trim();  // Get city from the user's input
+
+    if (!city) {
+      await sendMessage(senderId, { text: '⚠️ Please provide a city to check the weather for.' }, pageAccessToken);
+      return;
+    }
+
     try {
-      // Fetch weather data from wttr.in API
-      const apiUrl = 'https://wttr.in/valencia?format=%C+%t+%h+%w&m';
+      // Dynamically create the URL using encodeURIComponent for the city name
+      const apiUrl = `https://wttr.in/${encodeURIComponent(city)}?format=%C+%t+%h+%w&m`;
       const response = await axios.get(apiUrl);
 
       // The response will be a plain text string like "Partly cloudy +15°C 63% ↑8km/h"
       const weatherData = response.data;
 
       if (weatherData) {
-        // Split the weather data into individual components
+        // Split the weather data into individual components (condition, temperature, humidity, and wind)
         const [condition, temperature, humidity, wind] = weatherData.split(' ');
 
         // Construct the message to send
-        let message = `🌦️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿 𝗶𝗻 𝗩𝗮𝗹𝗲𝗻𝗰𝗶𝗮:\n\n`;
+        let message = `🌦️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿 𝗶𝗻 ${city}:\n\n`;
 
-        // Add the weather condition, temperature, humidity, and wind
+        // Add the weather condition, temperature, humidity, and wind details
         message += `🌤️ Condition: ${condition}\n`;
         message += `🌡️ Temperature: ${temperature}\n`;
         message += `💧 Humidity: ${humidity}\n`;
