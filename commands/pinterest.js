@@ -21,7 +21,7 @@ module.exports = {
       const images = response.data.result;
 
       if (images && images.length > 0) {
-        const limitedImages = images.slice(0, 3);  // Limit to 3 images
+        const limitedImages = images.slice(0, 5);  // Limit to 3 images
         for (const imageUrl of limitedImages) {
           const imageMessage = {
             attachment: {
