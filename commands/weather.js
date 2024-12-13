@@ -2,7 +2,7 @@ const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
 const fs = require('fs');
 
-const token = fs.readFileSync('token.txt', 'utf8');
+const token = fs.readFileSync('./config.json', 'utf8');
 
 module.exports = {
   name: 'weather',
