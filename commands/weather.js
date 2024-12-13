@@ -1,38 +1,42 @@
 const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
-const fs = require('fs');
-
-const token = fs.readFileSync('./config.json', 'utf8');
 
 module.exports = {
   name: 'weather',
-  description: 'Get the current weather of a city',
+  description: 'Fetch current weather information for Valencia',
   author: 'Clarence',
-  usage:'weather [city]',
+  role: 1,
 
-  async execute(senderId, args) {
-    const pageAccessToken = token;
-    const city = args.join(' ').trim();
-
-    // Vérifier si une ville a été fournie
-    if (!city) {
-      await sendMessage(senderId, { text: 'Please enter the name of a city to get the weather forecast. Ex: Valencia City weather' }, pageAccessToken);
-      return;
-    }
-
+  async execute(senderId, args, pageAccessToken) {
     try {
-      // Faire une requête à l'API de wttr.in
-      const response = await axios.get(`https://wttr.in/${encodeURIComponent(city)}?format=%C+%t+%h+%w&m`);
+      // Fetch weather data from wttr.in API
+      const apiUrl = 'https://wttr.in/valencia?format=%C+%t+%h+%w&m';
+      const response = await axios.get(apiUrl);
 
-      const weatherData = response.data; // Ex: "Partly cloudy +27°C 64% Humidity ↙ 15 km/h"
-      const formattedMessage = `🌤️ Weather in ${city} :\n\n${weatherData}`;
+      // The response will be a plain text string like "Partly cloudy +15°C 63% ↑8km/h"
+      const weatherData = response.data;
 
-      // Envoyer la réponse à l'utilisateur
-      await sendMessage(senderId, { text: formattedMessage }, pageAccessToken);
+      if (weatherData) {
+        // Split the weather data into individual components
+        const [condition, temperature, humidity, wind] = weatherData.split(' ');
 
+        // Construct the message to send
+        let message = `🌦️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿 𝗶𝗻 𝗩𝗮𝗹𝗲𝗻𝗰𝗶𝗮:\n\n`;
+
+        // Add the weather condition, temperature, humidity, and wind
+        message += `🌤️ Condition: ${condition}\n`;
+        message += `🌡️ Temperature: ${temperature}\n`;
+        message += `💧 Humidity: ${humidity}\n`;
+        message += `💨 Wind: ${wind}\n`;
+
+        // Send the formatted message
+        await sendMessage(senderId, { text: message }, pageAccessToken);
+      } else {
+        await sendMessage(senderId, { text: '⚠️ Sorry, could not fetch the weather data.' }, pageAccessToken);
+      }
     } catch (error) {
-      console.error('Error searching for weather:', error.message);
-      await sendMessage(senderId, { text: 'Unable to retrieve weather forecast. Check the city name or try again later.' }, pageAccessToken);
+      console.error('Error fetching weather data:', error);
+      await sendMessage(senderId, { text: '⚠️ Sorry, there was an error processing your request.' }, pageAccessToken);
     }
   }
 };
