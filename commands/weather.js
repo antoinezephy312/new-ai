@@ -25,16 +25,26 @@ module.exports = {
 
       if (weatherData) {
         // Split the weather data into individual components (condition, temperature, humidity, and wind)
-        const [condition, temperature, humidity, wind] = weatherData.split(' ');
+        const parts = weatherData.split(' ');
 
         // Construct the message to send
         let message = `🌦️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿 𝗶𝗻 ${city}:\n\n`;
 
-        // Add the weather condition, temperature, humidity, and wind details
-        message += `🌤️ Condition: ${condition}\n`;
-        message += `🌡️ Temperature: ${temperature}\n`;
-        message += `💧 Humidity: ${humidity}\n`;
-        message += `💨 Wind: ${wind}\n`;
+        // Check if the data was properly split and assign to variables
+        if (parts.length >= 4) {
+          const condition = parts[0];
+          const temperature = parts[1];
+          const humidity = parts[2];
+          const wind = parts[3];
+
+          // Add the weather condition, temperature, humidity, and wind details
+          message += `🌤️ Condition: ${condition}\n`;
+          message += `🌡️ Temperature: ${temperature}\n`;
+          message += `💧 Humidity: ${humidity}\n`;
+          message += `💨 Wind: ${wind}\n`;
+        } else {
+          message += '⚠️ Could not extract the weather details properly. Please try again later.';
+        }
 
         // Send the formatted message
         await sendMessage(senderId, { text: message }, pageAccessToken);
