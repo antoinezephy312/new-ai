@@ -4,111 +4,103 @@ const { sendMessage } = require('../handles/sendMessage');
 module.exports = {
   name: "ai",
   description: "Gpt4o x Gemini AI",
-  role: 1,
-  author: "Kiana",
+  author: "Clarence",
 
-  async execute(bot, args, authToken, event) {
-    if (!event?.sender?.id) {
-      console.error('Invalid event object: Missing sender ID.');
-      sendMessage(bot, { text: 'Error: Missing sender ID.' }, authToken);
-      return;
-    }
+  async execute(senderId, args, pageAccessToken, event, imageUrl) {
+    const userPrompt = args.join(" ").trim().toLowerCase();
 
-    const senderId = event.sender.id;
-    const userPrompt = args.join(" ");
-
-    if (!userPrompt && !event.message.reply_to?.mid) {
-      return sendMessage(bot, { text: "Please enter your question or reply with an image to analyze." }, authToken);
+    if (!userPrompt && !imageUrl) {
+      return sendMessage(
+        senderId,
+        { 
+          text: `❌ 𝗣𝗹𝗲𝗮𝘀𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲 𝗮 𝗾𝘂𝗲𝘀𝗧𝗶𝗼𝗻 𝗳𝗼𝗿 𝗚𝗲𝗺𝗶𝗻𝗶 𝗔𝗱𝘃𝗮𝗻𝗰𝗲𝗱 𝗼𝗿 𝗮𝗻 𝗶𝗺𝗮𝗴𝗲 𝘄𝗶𝘁𝗵 𝗮 𝗱𝗲𝘀𝗰𝗿𝗶𝗽𝘁𝗶𝗼𝗻 𝗳𝗼𝗿 𝗙𝗹𝗮𝘀𝗵 𝗩𝗶𝘀𝗶𝗼𝗻.` 
+        }, 
+        pageAccessToken
+      );
     }
 
     try {
-      const imageUrl = await extractImageUrl(event, authToken);
-
-      if (imageUrl) {
-        // If an image is detected, use Gemini Vision API
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
-        const response = await handleImageRecognition(apiUrl, userPrompt, imageUrl, senderId);
-        const result = response.response;
-
-        const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
-        sendLongMessage(bot, visionResponse, authToken);
-      } else {
-        // If no image, use GPT API
-        const apiUrl = `https://rest-api-french2.onrender.com/api/clarencev2`;
-        const response = await axios.get(apiUrl, {
-          params: {
-            prompt: userPrompt,
-            uid: senderId
-          }
-        });
-        const gptMessage = response.data.response;
-
-        const gptResponse = `${gptMessage}`;
-        sendLongMessage(bot, gptResponse, authToken);
+      if (!imageUrl) {
+        if (event.message?.reply_to?.mid) {
+          imageUrl = await getRepliedImage(event.message.reply_to.mid, pageAccessToken);
+        } else if (event.message?.attachments?.[0]?.type === 'image') {
+          imageUrl = event.message.attachments[0].payload.url;
+        }
       }
+
+      const textApiUrl = "https://rest-api-french2.onrender.com/api/clarencev2";
+      const imageRecognitionUrl = "https://api.joshweb.click/gemini";
+
+      const useImageRecognition =
+        imageUrl || 
+        ["recognize", "analyze", "analyst", "answer", "analysis"].some(term => userPrompt.includes(term)); 
+
+      let responseMessage;
+
+      if (useImageRecognition) {
+        const imageApiResponse = await axios.get(imageRecognitionUrl, {
+          params: { prompt: userPrompt, url: imageUrl || "" }
+        });
+        const imageRecognitionResponse = imageApiResponse.data.gemini || "❌ No response from Gemini Flash Vision.";
+        responseMessage = `${imageRecognitionResponse}`;
+      } else {
+        // Fetch from Gemini Advanced (text)
+        const textApiResponse = await axios.get(textApiUrl, { params: { prompt: userPrompt, uid: senderId } });
+        const textResponse = textApiResponse.data.response || "❌ No response from ClarenceAi.";
+        responseMessage = `${textResponse}`;
+      }
+
+      const responseTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila', hour12: true });
+
+      // Final formatted response
+      const finalResponse = `
+${responseMessage}
+━━━━━━━━━━━━━━━━━━
+📅 𝗗𝗮𝘁𝗲/𝗧𝗶𝗺𝗲: ${responseTime}`;
+
+      await sendConcatenatedMessage(senderId, finalResponse, pageAccessToken);
+
     } catch (error) {
-      console.error("Error in Gemini command:", error);
-      sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
+      console.error("❌ Error in Gemini command:", error);
+      sendMessage(
+        senderId,
+        { text: `❌ Error: ${error.message || "Something went wrong."}` },
+        pageAccessToken
+      );
     }
   }
 };
 
-async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
-  try {
-    const { data } = await axios.get(apiUrl, {
-      params: {
-        q: prompt,
-        uid: senderId,
-        imageUrl: imageUrl || ""
-      }
-    });
-    return data;
-  } catch (error) {
-    throw new Error("Failed to connect to the Gemini Vision API.");
-  }
-}
+async function getRepliedImage(mid, pageAccessToken) {
+  const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
+    params: { access_token: pageAccessToken }
+  });
 
-async function extractImageUrl(event, authToken) {
-  try {
-    if (event.message.reply_to?.mid) {
-      return await getRepliedImage(event.message.reply_to.mid, authToken);
-    } else if (event.message?.attachments?.[0]?.type === 'image') {
-      return event.message.attachments[0].payload.url;
-    }
-  } catch (error) {
-    console.error("Failed to extract image URL:", error);
+  if (data?.data?.[0]?.image_data?.url) {
+    return data.data[0].image_data.url;
   }
   return "";
 }
 
-async function getRepliedImage(mid, authToken) {
-  try {
-    const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
-      params: { access_token: authToken }
-    });
-    return data?.data[0]?.image_data?.url || "";
-  } catch (error) {
-    throw new Error("Failed to retrieve replied image.");
-  }
-}
-
-function sendLongMessage(bot, text, authToken) {
+async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
-  const delayBetweenMessages = 1000;
 
   if (text.length > maxMessageLength) {
     const messages = splitMessageIntoChunks(text, maxMessageLength);
-    sendMessage(bot, { text: messages[0] }, authToken);
 
-    messages.slice(1).forEach((message, index) => {
-      setTimeout(() => sendMessage(bot, { text: message }, authToken), (index + 1) * delayBetweenMessages);
-    });
+    for (const message of messages) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await sendMessage(senderId, { text: message }, pageAccessToken);
+    }
   } else {
-    sendMessage(bot, { text }, authToken);
+    await sendMessage(senderId, { text }, pageAccessToken);
   }
 }
 
 function splitMessageIntoChunks(message, chunkSize) {
-  const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
-  return message.match(regex);
+  const chunks = [];
+  for (let i = 0; i < message.length; i += chunkSize) {
+    chunks.push(message.slice(i, i + chunkSize));
+  }
+  return chunks;
 }
