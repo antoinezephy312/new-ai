@@ -53,10 +53,7 @@ module.exports = {
       const responseTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila', hour12: true });
 
       // Final formatted response
-      const finalResponse = `
-${responseMessage}
-━━━━━━━━━━━━━━━━━━
-📅 𝗗𝗮𝘁𝗲/𝗧𝗶𝗺𝗲: ${responseTime}`;
+      const finalResponse = `${responseMessage}`;
 
       await sendConcatenatedMessage(senderId, finalResponse, pageAccessToken);
 
