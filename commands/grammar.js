@@ -20,7 +20,7 @@ module.exports = {
 
     try {
       const response = await axios.get(apiUrl);
-      const reply = response.data.reply;
+      const reply = response.data.result;
 
       if (reply) {
         const formattedResponse = `✍️✨ 𝗚𝗿𝗮𝗺𝗺𝗮𝗿𝗹𝘆 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲:\n\n${reply}`;
