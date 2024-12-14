@@ -20,7 +20,7 @@ module.exports = {
 
     try {
       const response = await axios.get(apiUrl);
-      const reply = response.data.reply;
+      const reply = response.data.message;
 
       if (reply) {
         const formattedResponse = `🌟 𝗚𝗼𝗼𝗴𝗹𝗲 𝗔𝘀𝘀𝗶𝘀𝘁𝗮𝗻𝘁:\n\n${reply}`;
