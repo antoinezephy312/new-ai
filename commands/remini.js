@@ -25,7 +25,7 @@ module.exports = {
 
       await sendMessage(bot, { text: '⌛ 𝗘𝗻𝗵𝗮𝗻𝗰𝗶𝗻𝗴 𝗜𝗺𝗮𝗴𝗲, 𝗽𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁...' }, authToken);
 
-      const removeBgUrl = `https://api.ryzendesu.vip/api/ai/remini?url=${encodeURIComponent(imageUrl)}`;
+      const removeBgUrl = `https://ccprojectapis.ddns.net/api/upscale?url=${encodeURIComponent(imageUrl)}`;
 
       await sendMessage(bot, {
         attachment: {
