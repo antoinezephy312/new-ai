@@ -2,7 +2,7 @@ const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
-  name: 'remini',
+  name: 'imgur',
   description: 'Enhance Photo by replying your image.',
   author: 'Clarence Mangigo',
 
