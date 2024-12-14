@@ -1,12 +1,13 @@
 const axios = require('axios'); // Ensure axios is installed in your project
 const { sendMessage } = require('../handles/sendMessage');
+
 module.exports = {
     name: 'weather',
     description: 'Get current weather information for a specific location.',
     usage: '!weather <location>',
-    execute: async (message, args) => {
+    execute: async (bot, args, authToken, event) => {
         if (!args.length) {
-            return message.reply('Please provide a location. Example: !weather Valencia');
+            return sendMessage(bot, { text: 'Please provide a location. Example: !weather Valencia' }, authToken);
         }
 
         const location = args.join(' ');
@@ -16,37 +17,29 @@ module.exports = {
             const response = await axios.get(apiUrl);
 
             if (!response.data || !response.data["0"]) {
-                return message.reply(`No weather data found for "${location}".`);
+                return sendMessage(bot, { text: `No weather data found for "${location}".` }, authToken);
             }
 
             const weatherData = response.data["0"];
-            const locationInfo = weatherData.location;
-            const currentWeather = weatherData.current;
+            const locationInfo = weatherData.location || {};
+            const currentWeather = weatherData.current || {};
 
             // Construct weather message
-            const weatherMessage = `🌍 **Weather for ${locationInfo.name}**
-` +
-                `📅 Date: ${currentWeather.date}
-` +
-                `⏰ Observation Time: ${currentWeather.observationtime}
-` +
-                `🌡️ Temperature: ${currentWeather.temperature}°${locationInfo.degreetype}
-` +
-                `🌤️ Condition: ${currentWeather.skytext}
-` +
-                `💧 Humidity: ${currentWeather.humidity}%
-` +
-                `🌬️ Wind: ${currentWeather.winddisplay}
-` +
-                `🌡️ Feels Like: ${currentWeather.feelslike}°${locationInfo.degreetype}
-` +
-                `![Weather Icon](${currentWeather.imageUrl})`;
+            const weatherMessage = `🌍 **Weather for ${locationInfo.name || "Unknown"}**
+📅 Date: ${currentWeather.date || "N/A"}
+⏰ Observation Time: ${currentWeather.observationtime || "N/A"}
+🌡️ Temperature: ${currentWeather.temperature || "N/A"}°${locationInfo.degreetype || ""}
+🌤️ Condition: ${currentWeather.skytext || "N/A"}
+💧 Humidity: ${currentWeather.humidity || "N/A"}%
+🌬️ Wind: ${currentWeather.winddisplay || "N/A"}
+🌡️ Feels Like: ${currentWeather.feelslike || "N/A"}°${locationInfo.degreetype || ""}
+![Weather Icon](${currentWeather.imageUrl || "No image available"})`;
 
-            message.channel.send(weatherMessage);
+            sendMessage(bot, { text: weatherMessage }, authToken);
 
         } catch (error) {
             console.error('Error fetching weather data:', error);
-            message.reply('An error occurred while fetching the weather information. Please try again later.');
+            sendMessage(bot, { text: 'An error occurred while fetching the weather information. Please try again later.' }, authToken);
         }
     }
 };
