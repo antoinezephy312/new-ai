@@ -25,12 +25,12 @@ module.exports = {
             type: "template",
             payload: {
               template_type: "button",
-              text: `🤖 About Clarence:
+              text: `🤖 𝗔𝗯𝗼𝘂𝘁 𝗖𝗹𝗮𝗿𝗲𝗻𝗰𝗲:
 Clarence is your friendly, helpful personal assistant.
 
-💭 Why I named ClarenceAI as a name of the page bot because this is dedicated to admin itself 👸
+💭 𝗪𝗵𝘆 𝗜 𝗻𝗮𝗺𝗲𝗱 𝘁𝗵𝗲 𝗯𝗼𝘁 𝗖𝗹𝗮𝗿𝗲𝗻𝗰𝗲𝗔𝗜: This bot is dedicated to the admin itself 👸
 
-❓ Contact us admins if you experienced/encountered any issue regarding to the bot and I will try to fix it. Thank you for using me as a personal assistant!`,
+❓ 𝗖𝗼𝗻𝘁𝗮𝗰𝘁 𝘁𝗵𝗲 𝗮𝗱𝗺𝗶𝗻𝘀 if you experience/encounter any issues with the bot, and I will try to fix them. Thank you for using me as your personal assistant!`,
               buttons: [
                 {
                   type: "web_url",
