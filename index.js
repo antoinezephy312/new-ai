@@ -20,6 +20,35 @@ const VERIFY_TOKEN = 'pagebot';
 
 app.use(express.static(path.join(__dirname, 'Music')));
 
+// Setting up the "Get Started" button
+const setupGetStartedButton = async () => {
+  try {
+    const url = `https://graph.facebook.com/v21.0/me/messenger_profile?access_token=${config.pageAccessToken}`;
+
+    const payload = {
+      get_started: {
+        payload: "GET_STARTED_PAYLOAD"
+      }
+    };
+
+    const response = await axios.post(url, payload, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (response.data.result === "success") {
+      console.log("Get Started button set!");
+    } else {
+      console.log("Failed to set Get Started button");
+    }
+  } catch (error) {
+    console.error("Error setting Get Started button:", error);
+  }
+};
+
+setupGetStartedButton();
+
 const loadMenuCommands = async () => {
   try {
     const commandsDir = path.join(__dirname, 'commands');
@@ -114,4 +143,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`${colors.red} Bot Owner: ${config.owner}`);
 });
-                                     
