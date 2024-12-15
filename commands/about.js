@@ -2,7 +2,7 @@ const { sendMessage } = require('../handles/sendMessage'); // Ensure the path is
 
 module.exports = {
   name: 'about',
-  description: 'What is ClarenceAi?',
+  description: 'Who is ClarenceAi?',
   author: 'Clarence',
   role: 1,
   async execute(senderId, args, pageAccessToken) {
