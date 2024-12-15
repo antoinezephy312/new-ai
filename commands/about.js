@@ -28,7 +28,7 @@ module.exports = {
               text: `🤖 𝗔𝗯𝗼𝘂𝘁 𝗖𝗹𝗮𝗿𝗲𝗻𝗰𝗲:
 Clarence is your friendly, helpful personal assistant.
 
-💭 𝗪𝗵𝘆 𝗜 𝗻𝗮𝗺𝗲𝗱 𝘁𝗵𝗲 𝗯𝗼𝘁 𝗖𝗹𝗮𝗿𝗲𝗻𝗰𝗲𝗔𝗜: This bot is dedicated to the admin itself 👸
+💭 𝗪𝗵𝘆 𝗜 𝗻𝗮𝗺𝗲𝗱 𝘁𝗵𝗲 𝗯𝗼𝘁 𝗖𝗹𝗮𝗿𝗲𝗻𝗰𝗲𝗔𝗜: This bot is dedicated to the admin itself 😺
 
 ❓ 𝗖𝗼𝗻𝘁𝗮𝗰𝘁 𝘁𝗵𝗲 𝗮𝗱𝗺𝗶𝗻𝘀 if you experience/encounter any issues with the bot, and I will try to fix them. Thank you for using me as your personal assistant!`,
               buttons: [
