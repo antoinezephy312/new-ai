@@ -9,15 +9,20 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://kaiz-apis.gleeze.com/api/humanizer?q=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://ccprojectapis.ddns.net/api/aihuman?text=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const text = response.data.response;
+      
+      if (response.data.error !== 'No') {
+        throw new Error('API returned an error.');
+      }
+
+      const text = response.data.message;
 
       // Send the response, split into chunks if necessary
       await sendResponseInChunks(senderId, text, pageAccessToken, sendMessage);
     } catch (error) {
       console.error('Error calling Humanize AI:', error);
-      sendMessage(senderId, { text: 'An Error Occured' }, pageAccessToken);
+      sendMessage(senderId, { text: 'An Error Occurred' }, pageAccessToken);
     }
   }
 };
