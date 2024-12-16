@@ -39,11 +39,12 @@ module.exports = {
       const apiUrl = `https://ccprojectapis.ddns.net/api/smsfree?number=${encodeURIComponent(phoneNumber)}&message=${encodeURIComponent(message)}`;
       const response = await axios.get(apiUrl);
 
-      if (response.data.status) {
+      if (response.data.success) {
+        const smsData = response.data.response.data;
         sendMessage(
           senderId,
           {
-            text: `✅ SMS Sent Successfully!\n\n- **To**: ${phoneNumber}\n- **Message**: ${message}\n- **Response**: ${response.data.response}\n- **Network**: ${response.data.sim_network}\n- **Message Parts**: ${response.data.message_parts}\n- **Remaining Messages**: ${Math.floor(response.data.message_remaining)}\n\n**Promotion**: ${response.data.promotion}`,
+            text: `✅ SMS Sent Successfully!\n\n- **To**: ${smsData.to}\n- **Message**: ${message}\n- **Unit Cost**: ${smsData.unitCost} PHP\n- **Transaction Cost**: ${smsData.transactionCost} PHP\n- **Operator**: ${smsData.operatorCode}\n- **Message Parts**: ${smsData.messageParts}\n- **Remaining Messages**: ${smsData.remaining.toFixed(2)}\n- **From**: ${smsData.from}\n\n**Status**: ${response.data.message}`,
           },
           pageAccessToken
         );
