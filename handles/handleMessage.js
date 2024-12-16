@@ -5,8 +5,8 @@ const { sendMessage } = require('./sendMessage');
 const config = require('../config.json');
 
 const commands = new Map();
-const prefix = '';
 
+// Load commands
 const commandFiles = fs.readdirSync(path.join(__dirname, '../commands')).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
   const command = require(`../commands/${file}`);
@@ -22,17 +22,24 @@ async function handleMessage(event, pageAccessToken) {
 
   const senderId = event.sender.id;
 
+  // Check if the received message has text
   if (event.message?.text) {
-    const messageText = event.message.text.trim();
+    const messageText = event.message.text.trim().toLowerCase();
     console.log(`Received message: ${messageText}`);
 
+    // Check for "hi" or similar greetings
+    if (["hi", "hello", "get started", "hey"].includes(messageText)) {
+      return sendIntroduction(senderId, pageAccessToken);
+    }
+
+    // Extract command and arguments
     const words = messageText.split(' ');
     const commandName = words.shift().toLowerCase();
     const args = words;
 
     console.log(`Parsed command: ${commandName} with arguments: ${args}`);
 
-    // Check if the command exists
+    // Execute command if exists
     if (commands.has(commandName)) {
       const command = commands.get(commandName);
 
@@ -42,26 +49,13 @@ async function handleMessage(event, pageAccessToken) {
       }
 
       try {
-        let imageUrl = '';
-
-        if (event.message?.reply_to?.mid) {
-          try {
-            imageUrl = await getAttachments(event.message.reply_to.mid, pageAccessToken);
-          } catch (error) {
-            console.error("Failed to get attachment:", error);
-            imageUrl = '';
-          }
-        } else if (event.message?.attachments?.[0]?.type === 'image') {
-          imageUrl = event.message.attachments[0].payload.url;
-        }
-
-        await command.execute(senderId, args, pageAccessToken, event, imageUrl);
+        await command.execute(senderId, args, pageAccessToken, event);
       } catch (error) {
         console.error(`Error executing command "${commandName}":`, error);
         sendMessage(senderId, { text: 'There was an error executing that command.' }, pageAccessToken);
       }
     } else {
-      // If the command is not recognized, default to the "ai" command
+      // Default "AI" command if message is unrecognized
       const defaultCommand = commands.get('ai');
       if (defaultCommand) {
         try {
@@ -79,26 +73,35 @@ async function handleMessage(event, pageAccessToken) {
   }
 }
 
-async function getAttachments(mid, pageAccessToken) {
-  if (!mid) {
-    console.error("No message ID provided for getAttachments.");
-    throw new Error("No message ID provided.");
-  }
+// Function to send the introduction message with buttons
+async function sendIntroduction(senderId, pageAccessToken) {
+  const introductionMessage = {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "button",
+        text: "Hello! I am ClarenceAi, your assistant.\n\nType 'help' for available commands.",
+        buttons: [
+          {
+            type: "postback",
+            title: "Commands",
+            payload: "HELP"
+          },
+          {
+            type: "postback",
+            title: "About",
+            payload: "ABOUT"
+          }
+        ]
+      }
+    }
+  };
 
   try {
-    const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
-      params: { access_token: pageAccessToken }
-    });
-
-    if (data?.data?.length > 0 && data.data[0].image_data) {
-      return data.data[0].image_data.url;
-    } else {
-      console.error("No image found in the replied message.");
-      throw new Error("No image found in the replied message.");
-    }
+    await sendMessage(senderId, introductionMessage, pageAccessToken);
+    console.log('Introduction message sent successfully.');
   } catch (error) {
-    console.error("Error fetching attachments:", error);
-    throw new Error("Failed to fetch attachments.");
+    console.error('Failed to send introduction message:', error);
   }
 }
 
