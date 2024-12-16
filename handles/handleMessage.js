@@ -90,7 +90,7 @@ async function sendIntroduction(senderId, pageAccessToken) {
           {
             type: "postback",
             title: "About",
-            payload: "ABOUT"
+            payload: "about"
           }
         ]
       }
