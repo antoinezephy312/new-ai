@@ -84,12 +84,12 @@ async function sendIntroduction(senderId, pageAccessToken) {
         buttons: [
           {
             type: "postback",
-            title: "Commands",
+            title: "help",
             payload: "HELP"
           },
           {
             type: "postback",
-            title: "About",
+            title: "about",
             payload: "about"
           }
         ]
