@@ -16,9 +16,9 @@ module.exports = {
     }
 
     try {
-      const apiUrl = `https://api.joshweb.click/api/pinterest?q=${encodeURIComponent(query)}`;
+      const apiUrl = `https://kaiz-apis.gleeze.com/api/pinterest?search=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
-      const images = response.data.result;
+      const images = response.data.data;
 
       if (images && images.length > 0) {
         const limitedImages = images.slice(0, 5);  // Limit to 3 images
