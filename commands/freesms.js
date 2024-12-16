@@ -36,7 +36,7 @@ module.exports = {
     userLimits[senderId].push(now);
 
     try {
-      const apiUrl = `https://api.kenliejugarap.com/freesmslbc/?number=${encodeURIComponent(phoneNumber)}&message=${encodeURIComponent(message)}`;
+      const apiUrl = `https://ccprojectapis.ddns.net/api/smsfree?number=${encodeURIComponent(phoneNumber)}&message=${encodeURIComponent(message)}`;
       const response = await axios.get(apiUrl);
 
       if (response.data.status) {
