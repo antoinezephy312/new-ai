@@ -10,9 +10,9 @@ module.exports = {
     const prompt = args.join(' ');
 
     try {
-      const apiUrl = `https://simsimi-api-new2.onrender.com/sim?q=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://apis-markdevs69v2.onrender.com/api/sim/simv3?type=ask&ask=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const text = response.data.respond;
+      const text = response.data.answer;
 
       // Send the response, split into chunks if necessary
       await sendResponseInChunks(senderId, text, pageAccessToken);
