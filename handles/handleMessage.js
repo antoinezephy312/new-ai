@@ -83,11 +83,6 @@ async function sendIntroduction(senderId, pageAccessToken) {
         text: "Hello! I am ClarenceAi, your assistant.\n\nType 'help' for available commands.",
         buttons: [
           {
-            type: "web_url",
-            url: "https://www.facebook.com/profile.php?id=61561403233164",
-            itle: "Like/Follow our Page"
-          },
-          {
             type: "postback",
             title: "help",
             payload: "HELP"
