@@ -1,23 +1,25 @@
 const axios = require("axios");
-const { sendMessage } = require("../handles/sendMessage");
+const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: "ai",
-  description: "GPT-4o x Gemini AI",
+  description: "Gpt4o x Gemini AI",
   role: 1,
   author: "Kiana",
 
   async execute(bot, args, authToken, event) {
     if (!event?.sender?.id) {
-      console.error("Invalid event object: Missing sender ID.");
-      sendMessage(bot, { text: "Error: Missing sender ID." }, authToken);
+      console.error('Invalid event object: Missing sender ID.');
+      sendMessage(bot, { text: 'Error: Missing sender ID.' }, authToken);
       return;
     }
 
     const senderId = event.sender.id;
     const userPrompt = args.join(" ");
+    const repliedMessage = event.message.reply_to?.message || ""; // Get the replied message content
+    const finalPrompt = repliedMessage ? `${repliedMessage} ${userPrompt}`.trim() : userPrompt; // Combine reply + user input
 
-    if (!userPrompt && !event.message.reply_to?.mid) {
+    if (!finalPrompt) {
       return sendMessage(bot, { text: "Please enter your question or reply with an image to analyze." }, authToken);
     }
 
@@ -27,7 +29,7 @@ module.exports = {
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
         const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
-        const response = await handleImageRecognition(apiUrl, userPrompt, imageUrl, senderId);
+        const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.response;
 
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
@@ -35,33 +37,32 @@ module.exports = {
       } else {
         // If no image, use GPT API
         const apiUrl = `https://rest-api-french3.onrender.com/api/clarencev2`;
-        const response = await handleTextAnalysis(apiUrl, userPrompt, senderId);
-        const gptResponse = response.response;
+        const response = await axios.get(apiUrl, {
+          params: {
+            prompt: finalPrompt,
+            uid: senderId
+          }
+        });
+        const gptMessage = response.data.response;
 
+        const gptResponse = `${gptMessage}`;
         sendLongMessage(bot, gptResponse, authToken);
       }
     } catch (error) {
       console.error("Error in AI command:", error);
-      sendMessage(bot, { text: `❌ Error: ${error.message || "Something went wrong."}` }, authToken);
+      sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
     }
-  },
-};
-
-async function handleTextAnalysis(apiUrl, prompt, senderId) {
-  try {
-    const { data } = await axios.get(apiUrl, {
-      params: { prompt, uid: senderId },
-    });
-    return data;
-  } catch (error) {
-    throw new Error("Failed to connect to the GPT API.");
   }
-}
+};
 
 async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
   try {
     const { data } = await axios.get(apiUrl, {
-      params: { q: prompt, uid: senderId, imageUrl: imageUrl || "" },
+      params: {
+        q: prompt,
+        uid: senderId,
+        imageUrl: imageUrl || ""
+      }
     });
     return data;
   } catch (error) {
@@ -73,7 +74,7 @@ async function extractImageUrl(event, authToken) {
   try {
     if (event.message.reply_to?.mid) {
       return await getRepliedImage(event.message.reply_to.mid, authToken);
-    } else if (event.message?.attachments?.[0]?.type === "image") {
+    } else if (event.message?.attachments?.[0]?.type === 'image') {
       return event.message.attachments[0].payload.url;
     }
   } catch (error) {
@@ -84,12 +85,9 @@ async function extractImageUrl(event, authToken) {
 
 async function getRepliedImage(mid, authToken) {
   try {
-    const { data } = await axios.get(
-      `https://graph.facebook.com/v21.0/${mid}/attachments`,
-      {
-        params: { access_token: authToken },
-      }
-    );
+    const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
+      params: { access_token: authToken }
+    });
     return data?.data[0]?.image_data?.url || "";
   } catch (error) {
     throw new Error("Failed to retrieve replied image.");
@@ -113,6 +111,6 @@ function sendLongMessage(bot, text, authToken) {
 }
 
 function splitMessageIntoChunks(message, chunkSize) {
-  const regex = new RegExp(`.{1,${chunkSize}}`, "g");
+  const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
   return message.match(regex);
 }
