@@ -1,9 +1,8 @@
 const { sendMessage } = require('../handles/sendMessage');
-const moment = require("moment-timezone");
 
 module.exports = {
   name: "reminder",
-  description: "Set a reminder for a specific time (Philippine time) and text.",
+  description: "Set a reminder for a specific time and text.",
   role: 1, // Adjust this if needed
   author: "French Mangigo",
 
@@ -14,40 +13,24 @@ module.exports = {
       return;
     }
 
-    const senderId = event.sender.id;
-    const timeInput = args[0]; // Example: "10:00PM"
+    const time = parseInt(args[0], 10); // Extract time in seconds
     const text = args.slice(1).join(" "); // Extract reminder text
 
-    if (!timeInput || !text) {
+    if (isNaN(time) || !text) {
       return sendMessage(bot, {
-        text: `Usage: reminder [time in HH:MM AM/PM] [reminder text]\nExample: reminder 10:00PM Time to eat!`
+        text: `Usage: reminder [time in seconds] [reminder text]\nExample: reminder 60 Take a break!`
       }, authToken);
     }
 
-    // Get the current time in Philippine Standard Time
-    const currentTime = moment().tz("Asia/Manila");
-    const reminderTime = moment.tz(timeInput, "hh:mmA", "Asia/Manila");
-
-    if (!reminderTime.isValid()) {
-      return sendMessage(bot, {
-        text: "❌ Invalid time format. Please use HH:MM AM/PM (e.g., 10:00PM)."
-      }, authToken);
-    }
-
-    // Check if the time is for the next day
-    if (reminderTime.isBefore(currentTime)) {
-      reminderTime.add(1, "day");
-    }
-
-    const timeDifference = reminderTime.diff(currentTime);
+    const display = time > 59 ? `${time / 60} minute(s)` : `${time} second(s)`;
 
     // Notify the user that the reminder is set
     sendMessage(bot, {
-      text: `✅ Reminder set for ${reminderTime.format("hh:mm A")} (Philippine Time). I'll remind you!`
+      text: `✅ Reminder set! I'll remind you in ${display}.`
     }, authToken);
 
     // Wait for the specified time
-    await new Promise(resolve => setTimeout(resolve, timeDifference));
+    await new Promise(resolve => setTimeout(resolve, time * 1000));
 
     // Send the reminder
     sendMessage(bot, {
