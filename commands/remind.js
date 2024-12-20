@@ -13,7 +13,6 @@ module.exports = {
       return;
     }
 
-    const senderId = event.sender.id;
     const time = parseInt(args[0], 10); // Extract time in seconds
     const text = args.slice(1).join(" "); // Extract reminder text
 
@@ -35,8 +34,7 @@ module.exports = {
 
     // Send the reminder
     sendMessage(bot, {
-      text: `⏰ Reminder:\n${text}`,
-      mentions: [{ tag: "You", id: senderId }]
+      text: `⏰ Reminder:\n${text}`
     }, authToken);
   }
 };
