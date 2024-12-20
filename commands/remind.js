@@ -13,16 +13,40 @@ module.exports = {
       return;
     }
 
-    const time = parseInt(args[0], 10); // Extract time in seconds
+    const timeArg = args[0]; // Extract the time argument
     const text = args.slice(1).join(" "); // Extract reminder text
 
-    if (isNaN(time) || !text) {
+    if (!timeArg || !text) {
       return sendMessage(bot, {
-        text: `Usage: reminder [time in seconds] [reminder text]\nExample: reminder 60 Take a break!`
+        text: `Usage: reminder [time in minutes or minutes:seconds] [reminder text]\nExample: reminder 1 Take a break!\nExample: reminder 1:30 Take a break!`
       }, authToken);
     }
 
-    const display = time > 59 ? `${time / 60} minute(s)` : `${time} second(s)`;
+    let timeInSeconds;
+
+    // Check if the time argument contains a colon (e.g., "1:30")
+    if (timeArg.includes(":")) {
+      const [minutes, seconds] = timeArg.split(":").map(Number);
+      if (isNaN(minutes) || isNaN(seconds)) {
+        return sendMessage(bot, {
+          text: `Invalid time format. Use minutes or minutes:seconds.\nExample: reminder 1 Take a break!\nExample: reminder 1:30 Take a break!`
+        }, authToken);
+      }
+      timeInSeconds = minutes * 60 + seconds;
+    } else {
+      // Assume the input is in minutes
+      const minutes = parseInt(timeArg, 10);
+      if (isNaN(minutes)) {
+        return sendMessage(bot, {
+          text: `Invalid time format. Use minutes or minutes:seconds.\nExample: reminder 1 Take a break!\nExample: reminder 1:30 Take a break!`
+        }, authToken);
+      }
+      timeInSeconds = minutes * 60;
+    }
+
+    const display = timeInSeconds >= 60
+      ? `${Math.floor(timeInSeconds / 60)} minute(s) and ${timeInSeconds % 60} second(s)`
+      : `${timeInSeconds} second(s)`;
 
     // Notify the user that the reminder is set
     sendMessage(bot, {
@@ -30,7 +54,7 @@ module.exports = {
     }, authToken);
 
     // Wait for the specified time
-    await new Promise(resolve => setTimeout(resolve, time * 1000));
+    await new Promise(resolve => setTimeout(resolve, timeInSeconds * 1000));
 
     // Send the reminder
     sendMessage(bot, {
