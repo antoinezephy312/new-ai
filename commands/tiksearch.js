@@ -14,7 +14,7 @@ module.exports = {
         return sendMessage(senderId, { text: "Usage: tiksearch <search text>" }, pageAccessToken);
       }
 
-      const response = await axios.get(`https://apis-markdevs69v2.onrender.com/new/api/tiksearch?search=${encodeURIComponent(searchQuery)}`);
+      const response = await axios.get(`https://markdevs-last-api-vtjp.onrender.com/api/tiksearch?search=${encodeURIComponent(searchQuery)}`);
       const videos = response.data.data.videos;
 
       if (!videos || videos.length === 0) {
