@@ -12,32 +12,38 @@ module.exports = {
     try {
       const apiUrl = `https://kaiz-apis.gleeze.com/api/lyrics?song=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
-      const result = response.data.lyrics; // Fix: Access the 'result' object
 
-      if (result && result.lyrics) {
-        const lyricsMessage = `Title: ${result.title}\nArtist: ${result.artist}\n\n${result.lyrics}`;
+      // Extract the data from the API response
+      const { title, artist, lyrics, image } = response.data;
 
-        // Send the lyrics message, split into chunks if necessary
+      if (lyrics) {
+        const lyricsMessage = `Title: ${title}\nArtist: ${artist}\n\n${lyrics}`;
+
+        // Send the lyrics message in chunks
         await sendResponseInChunks(senderId, lyricsMessage, pageAccessToken);
 
         // Optionally send an image if available
-        if (result.image) {
-          await sendMessage(senderId, {
-            attachment: {
-              type: 'image',
-              payload: {
-                url: result.image,
-                is_reusable: true,
+        if (image) {
+          await sendMessage(
+            senderId,
+            {
+              attachment: {
+                type: 'image',
+                payload: {
+                  url: image,
+                  is_reusable: true,
+                },
               },
             },
-          }, pageAccessToken);
+            pageAccessToken
+          );
         }
       } else {
         console.error('Error: No lyrics found in the response.');
         await sendMessage(senderId, { text: 'Sorry, no lyrics were found for your query.' }, pageAccessToken);
       }
     } catch (error) {
-      console.error('Error calling Lyrics API:', error);
+      console.error('Error calling Lyrics API:', error.message);
       await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
     }
   },
