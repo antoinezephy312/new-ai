@@ -10,9 +10,9 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) {
     const query = args.join(' ');
     try {
-      const apiUrl = `https://api.joshweb.click/search/lyrics?q=${encodeURIComponent(query)}`;
+      const apiUrl = `https://kaiz-apis.gleeze.com/api/lyrics?song=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
-      const result = response.data.result; // Fix: Access the 'result' object
+      const result = response.data.lyrics; // Fix: Access the 'result' object
 
       if (result && result.lyrics) {
         const lyricsMessage = `Title: ${result.title}\nArtist: ${result.artist}\n\n${result.lyrics}`;
