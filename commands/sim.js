@@ -10,15 +10,15 @@ module.exports = {
     const prompt = args.join(' ');
 
     try {
-      const apiUrl = `https://apis-markdevs69v2.onrender.com/api/sim/simv3?type=ask&ask=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://simi-api-g8kq.onrender.com/sim?query=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const text = response.data.answer;
+      const text = response.data.respond;
 
       // Send the response, split into chunks if necessary
       await sendResponseInChunks(senderId, text, pageAccessToken);
     } catch (error) {
       console.error('Error calling sim:', error);
-      await sendMessage(senderId, { text: 'Please enter your question' }, pageAccessToken);
+      await sendMessage(senderId, { text: 'Error badi' }, pageAccessToken);
     }
   }
 };
