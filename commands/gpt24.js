@@ -17,7 +17,7 @@ module.exports = {
     const senderId = event.sender.id;
     const userPrompt = args.join(" ");
     const repliedMessage = event.message.reply_to?.message || ""; // Get the replied message content
-    const finalPrompt = repliedMessage ? `${repliedMessage} ${userPrompt}`.trim() : userPrompt; // Combine reply + user input
+    const finalPrompt = repliedMessage ? ${repliedMessage} ${userPrompt}.trim() : userPrompt; // Combine reply + user input
 
     if (!finalPrompt) {
       return sendMessage(bot, { text: "Please enter your question or reply with an image to analyze." }, authToken);
@@ -32,11 +32,11 @@ module.exports = {
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.response;
 
-        const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
+        const visionResponse = 🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result};
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = "https://rest-api-french3.onrender.com/api/clarencev2";
+        const apiUrl = `https://rest-api-french3.onrender.com/api/clarencev2`;
         const response = await axios.get(apiUrl, {
           params: {
             prompt: finalPrompt,
@@ -45,18 +45,16 @@ module.exports = {
         });
         const gptMessage = response.data.response;
 
-        const gptResponse = `${gptMessage}`;
+        const gptResponse = ${gptMessage};
         sendLongMessage(bot, gptResponse, authToken);
 
         // Fetch audio response and send it
-        const audioUrl = await generateAudio(gptMessage);  // Get the audio URL after generating the audio
-        if (audioUrl) {
-          await sendAudio(bot, audioUrl, authToken); // Send the audio URL
-        }
+        const audioUrl = "https://api.joshweb.click/api/aivoice?q=${encodeURIComponent(gptMessage)}&id=8";
+        await sendAudio(bot, audioUrl, authToken);
       }
     } catch (error) {
       console.error("Error in AI command:", error);
-      sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
+      sendMessage(bot, { text: Error: ${error.message || "Something went wrong."} }, authToken);
     }
   }
 };
@@ -117,41 +115,20 @@ function sendLongMessage(bot, text, authToken) {
 }
 
 function splitMessageIntoChunks(message, chunkSize) {
-  const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
+  const regex = new RegExp(.{1,${chunkSize}}, 'g');
   return message.match(regex);
-}
-
-async function generateAudio(text) {
-  try {
-    const apiUrl = `https://api.joshweb.click/api/aivoice?q=${encodeURIComponent(text)}&id=8`;
-    const response = await axios.get(apiUrl);
-    const audioUrl = response.data.url; // URL of the generated audio
-
-    if (audioUrl) {
-      return audioUrl; // Return the URL to be sent as an audio attachment
-    } else {
-      console.error("No audio URL found in the response.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Failed to generate audio:", error);
-    return null;
-  }
 }
 
 async function sendAudio(bot, audioUrl, authToken) {
   try {
-    // Create the audio attachment with the hosted URL
     const audioAttachment = {
       attachment: {
         type: "audio",
         payload: {
-          url: audioUrl  // URL of the hosted audio file
+          url: audioUrl
         }
       }
     };
-
-    // Send the message with the audio attachment
     await sendMessage(bot, audioAttachment, authToken);
   } catch (error) {
     console.error("Failed to send audio response:", error);
