@@ -45,7 +45,7 @@ module.exports = {
         });
         const gptMessage = response.data.response;
 
-        const gptResponse = ${gptMessage};
+        const gptResponse = `${gptMessage}`;
         sendLongMessage(bot, gptResponse, authToken);
 
         // Fetch audio response and send it
