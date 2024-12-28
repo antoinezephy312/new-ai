@@ -49,12 +49,12 @@ module.exports = {
         sendLongMessage(bot, gptResponse, authToken);
 
         // Fetch audio response and send it
-        const audioUrl = "https://api.joshweb.click/api/aivoice?q=${encodeURIComponent(gptMessage)}&id=8";
+        const audioUrl = `https://api.joshweb.click/api/aivoice?q=${encodeURIComponent(gptMessage)}&id=8`;
         await sendAudio(bot, audioUrl, authToken);
       }
     } catch (error) {
       console.error("Error in AI command:", error);
-      sendMessage(bot, { text: Error: ${error.message || "Something went wrong."} }, authToken);
+      sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
     }
   }
 };
@@ -115,7 +115,7 @@ function sendLongMessage(bot, text, authToken) {
 }
 
 function splitMessageIntoChunks(message, chunkSize) {
-  const regex = new RegExp(.{1,${chunkSize}}, 'g');
+  const regex = new RegExp(`.{1,${chunkSize}}`, 'g'); // Corrected the regex
   return message.match(regex);
 }
 
