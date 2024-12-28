@@ -49,7 +49,7 @@ module.exports = {
         sendLongMessage(bot, gptResponse, authToken);
 
         // Fetch audio response and send it
-        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(gptMessage)}&tl=tl&client=tw-ob`;
+        const audioUrl = `https://api.joshweb.click/api/aivoice?q=${encodeURIComponent(gptMessage)}&id=8`;
         await sendAudio(bot, audioUrl, authToken);
       }
     } catch (error) {
