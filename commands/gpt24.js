@@ -28,7 +28,7 @@ module.exports = {
 
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
+        const apiUrl = "https://kaiz-apis.gleeze.com/api/gemini-vision";
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.response;
 
@@ -36,7 +36,7 @@ module.exports = {
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://rest-api-french3.onrender.com/api/clarencev2`;
+        const apiUrl = "https://rest-api-french3.onrender.com/api/clarencev2";
         const response = await axios.get(apiUrl, {
           params: {
             prompt: finalPrompt,
@@ -49,8 +49,10 @@ module.exports = {
         sendLongMessage(bot, gptResponse, authToken);
 
         // Fetch audio response and send it
-        const audioUrl = `https://api.joshweb.click/api/aivoice?q=${encodeURIComponent(gptMessage)}&id=8`;
-        await sendAudio(bot, audioUrl, authToken);
+        const audioUrl = await generateAudio(gptMessage);  // Get the audio URL after generating the audio
+        if (audioUrl) {
+          await sendAudio(bot, audioUrl, authToken); // Send the audio URL
+        }
       }
     } catch (error) {
       console.error("Error in AI command:", error);
@@ -119,16 +121,37 @@ function splitMessageIntoChunks(message, chunkSize) {
   return message.match(regex);
 }
 
+async function generateAudio(text) {
+  try {
+    const apiUrl = `https://api.joshweb.click/api/aivoice?q=${encodeURIComponent(text)}&id=8`;
+    const response = await axios.get(apiUrl);
+    const audioUrl = response.data.url; // URL of the generated audio
+
+    if (audioUrl) {
+      return audioUrl; // Return the URL to be sent as an audio attachment
+    } else {
+      console.error("No audio URL found in the response.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to generate audio:", error);
+    return null;
+  }
+}
+
 async function sendAudio(bot, audioUrl, authToken) {
   try {
+    // Create the audio attachment with the hosted URL
     const audioAttachment = {
       attachment: {
         type: "audio",
         payload: {
-          url: audioUrl
+          url: audioUrl  // URL of the hosted audio file
         }
       }
     };
+
+    // Send the message with the audio attachment
     await sendMessage(bot, audioAttachment, authToken);
   } catch (error) {
     console.error("Failed to send audio response:", error);
