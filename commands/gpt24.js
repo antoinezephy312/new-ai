@@ -17,7 +17,7 @@ module.exports = {
     const senderId = event.sender.id;
     const userPrompt = args.join(" ");
     const repliedMessage = event.message.reply_to?.message || ""; // Get the replied message content
-    const finalPrompt = repliedMessage ? ${repliedMessage} ${userPrompt}.trim() : userPrompt; // Combine reply + user input
+    const finalPrompt = repliedMessage ? `${repliedMessage} ${userPrompt}`.trim() : userPrompt; // Combine reply + user input
 
     if (!finalPrompt) {
       return sendMessage(bot, { text: "Please enter your question or reply with an image to analyze." }, authToken);
