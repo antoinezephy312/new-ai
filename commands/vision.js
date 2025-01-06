@@ -28,7 +28,7 @@ module.exports = {
 
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
+        const apiUrl = `https://api.joshweb.click/gemini?prompt=&url=${encodeURIComponent(imageUrl)}`;
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.response;
 
