@@ -27,16 +27,16 @@ module.exports = {
       const imageUrl = await extractImageUrl(event, authToken);
 
       if (imageUrl) {
-  // If an image is detected, use Gemini Vision API
-  const apiUrl = `https://api.joshweb.click/gemini?prompt=${encodeURIComponent(finalPrompt)}&url=${encodeURIComponent(imageUrl)}`;
-  const response = await axios.get(apiUrl);
-  const result = response.data.gemini; // Extract the 'gemini' field from the response
+        // If an image is detected, use Gemini Vision API
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
+        const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
+        const result = response.response;
 
-  const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
-  sendLongMessage(bot, visionResponse, authToken);
-} else {
+        const visionResponse = 🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n`${result}`;
+        sendLongMessage(bot, visionResponse, authToken);
+      } else {
         // If no image, use GPT API
-        const apiUrl = `https://rest-api-french3.onrender.com/api/clarencev2`;
+        const apiUrl = "https://rest-api-french3.onrender.com/api/clarencev2";
         const response = await axios.get(apiUrl, {
           params: {
             prompt: finalPrompt,
@@ -50,7 +50,7 @@ module.exports = {
       }
     } catch (error) {
       console.error("Error in AI command:", error);
-      sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
+      sendMessage(bot, { text: Error: ${error.message || "Something went wrong."} }, authToken);
     }
   }
 };
@@ -111,6 +111,6 @@ function sendLongMessage(bot, text, authToken) {
 }
 
 function splitMessageIntoChunks(message, chunkSize) {
-  const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
+  const regex = new RegExp(.{1,${chunkSize}}, 'g');
   return message.match(regex);
 }
