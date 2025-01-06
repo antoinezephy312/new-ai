@@ -50,7 +50,7 @@ module.exports = {
       }
     } catch (error) {
       console.error("Error in AI command:", error);
-      sendMessage(bot, { text: Error: ${error.message || "Something went wrong."} }, authToken);
+      sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
     }
   }
 };
@@ -72,7 +72,7 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
 
 async function extractImageUrl(event, authToken) {
   try {
-    if (event.message.reply_to?.mid) {
+    if (event.message?.reply_to?.mid) {
       return await getRepliedImage(event.message.reply_to.mid, authToken);
     } else if (event.message?.attachments?.[0]?.type === 'image') {
       return event.message.attachments[0].payload.url;
@@ -111,6 +111,6 @@ function sendLongMessage(bot, text, authToken) {
 }
 
 function splitMessageIntoChunks(message, chunkSize) {
-  const regex = new RegExp(.{1,${chunkSize}}, 'g');
+  const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
   return message.match(regex);
 }
