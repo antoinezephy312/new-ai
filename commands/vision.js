@@ -27,14 +27,14 @@ module.exports = {
       const imageUrl = await extractImageUrl(event, authToken);
 
       if (imageUrl) {
-        // If an image is detected, use Gemini Vision API
-        const apiUrl = `https://api.joshweb.click/gemini?prompt=&url=${encodeURIComponent(imageUrl)}`;
-        const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
-        const result = response.response;
+  // If an image is detected, use Gemini Vision API
+  const apiUrl = `https://api.joshweb.click/gemini?prompt=${encodeURIComponent(finalPrompt)}&url=${encodeURIComponent(imageUrl)}`;
+  const response = await axios.get(apiUrl);
+  const result = response.data.gemini; // Extract the 'gemini' field from the response
 
-        const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
-        sendLongMessage(bot, visionResponse, authToken);
-      } else {
+  const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
+  sendLongMessage(bot, visionResponse, authToken);
+} else {
         // If no image, use GPT API
         const apiUrl = `https://rest-api-french3.onrender.com/api/clarencev2`;
         const response = await axios.get(apiUrl, {
