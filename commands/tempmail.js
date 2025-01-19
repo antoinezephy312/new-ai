@@ -1,8 +1,6 @@
 const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
 
-const domains = ["rteet.com", "1secmail.com", "1secmail.org", "1secmail.net", "wwjmp.com", "esiix.com", "xojxe.com", "yoggm.com"];
-
 module.exports = {
   name: 'tempmail',
   description: 'Generate temporary email and check inbox',
@@ -11,25 +9,50 @@ module.exports = {
 
   async execute(senderId, args, pageAccessToken) {
     const [cmd, email] = args;
+
     if (cmd === 'gen') {
-      const domain = domains[Math.floor(Math.random() * domains.length)];
-      return sendMessage(senderId, { text: `📧 | Temporary Email: ${Math.random().toString(36).slice(2, 10)}@${domain}` }, pageAccessToken);
+      try {
+        const response = await axios.get('https://kaiz-apis.gleeze.com/api/tempmail-create');
+        const { address, token } = response.data;
+
+        if (address && token) {
+          // Save the token alongside the email (implement storage as per your system's design).
+          return sendMessage(
+            senderId,
+            { text: `📧 | Temporary Email: ${address}\n🔑 | Token: ${token}\n\nUse this token to check the inbox.` },
+            pageAccessToken
+          );
+        } else {
+          throw new Error('Invalid response from TempMail API.');
+        }
+      } catch (error) {
+        return sendMessage(senderId, { text: 'Error: Unable to generate a temporary email.' }, pageAccessToken);
+      }
     }
 
-    if (cmd === 'inbox' && email && domains.some(d => email.endsWith(`@${d}`))) {
+    if (cmd === 'inbox' && email) {
       try {
-        const [username, domain] = email.split('@');
-        const inbox = (await axios.get(`https://www.1secmail.com/api/v1/?action=getMessages&login=${username}&domain=${domain}`)).data;
-        if (!inbox.length) return sendMessage(senderId, { text: 'Inbox is empty.' }, pageAccessToken);
+        // Assume `email` is the token received during email generation.
+        const inboxResponse = await axios.get(`https://kaiz-apis.gleeze.com/api/tempmail-inbox?token=${email}`);
+        const { emails } = inboxResponse.data;
 
-        const { id, from, subject, date } = inbox[0];
-        const { textBody } = (await axios.get(`https://www.1secmail.com/api/v1/?action=readMessage&login=${username}&domain=${domain}&id=${id}`)).data;
-        return sendMessage(senderId, { text: `📬 | Latest Email:\nFrom: ${from}\nSubject: ${subject}\nDate: ${date}\n\nContent:\n${textBody}` }, pageAccessToken);
-      } catch {
+        if (!emails || emails.length === 0) {
+          return sendMessage(senderId, { text: 'Inbox is empty.' }, pageAccessToken);
+        }
+
+        const { to, from, subject, body } = emails[0]; // Display the latest email.
+        return sendMessage(
+          senderId,
+          {
+            text: `📬 | Latest Email:\nTo: ${to}\nFrom: ${from}\nSubject: ${subject}\n\nContent:\n${body}`,
+          },
+          pageAccessToken
+        );
+      } catch (error) {
         return sendMessage(senderId, { text: 'Error: Unable to fetch inbox or email content.' }, pageAccessToken);
       }
     }
 
-    sendMessage(senderId, { text: 'Invalid usage. Use -tempmail gen or -tempmail inbox <email>' }, pageAccessToken);
+    sendMessage(senderId, { text: 'Invalid usage. Use -tempmail gen or -tempmail inbox <token>' }, pageAccessToken);
   },
 };
