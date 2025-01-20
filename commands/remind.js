@@ -43,7 +43,7 @@ module.exports = {
 
     // Convert to 24-hour format and calculate delay
     const now = moment();
-    const targetTime = moment.tz(`${hour}:${minute} ${meridiem}`, "hh:mm a", now.tz());
+    const targetTime = moment.tz(`${hour}:${minute} ${meridiem}`, "hh:mm a", "Asia/Manila");
 
     if (targetTime.isBefore(now)) {
       targetTime.add(1, "day"); // Schedule for the next day if the time has already passed
