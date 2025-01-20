@@ -26,7 +26,7 @@ module.exports = {
       // Extract the Facebook ID from the response
       const { status, UID } = res.data;
 
-      if (status && UID) {
+      if (status && UID) { // Correctly check for UID
         // Send the result back to the user
         await sendMessage(senderId, {
           text: `🔍 Facebook ID: ${UID}`
