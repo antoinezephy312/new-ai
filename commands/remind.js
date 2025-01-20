@@ -1,4 +1,4 @@
-const moment = require("../moment-timezone/moment-timezone");
+const moment = require("moment-timezone");
 const { sendMessage } = require("../handles/sendMessage");
 
 module.exports = {
