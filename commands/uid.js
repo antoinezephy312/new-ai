@@ -26,10 +26,10 @@ module.exports = {
       // Extract the Facebook ID from the response
       const { status, UID } = res.data;
 
-      if (status && result) {
+      if (status && UID) {
         // Send the result back to the user
         await sendMessage(senderId, {
-          text: `🔍 Facebook ID: ${result}`
+          text: `🔍 Facebook ID: ${UID}`
         }, pageAccessToken);
       } else {
         throw new Error("Unable to retrieve Facebook ID");
