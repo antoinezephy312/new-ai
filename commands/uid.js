@@ -19,12 +19,12 @@ module.exports = {
 
     try {
       // Make a request to the API with the profile URL
-      const res = await axios.get(`https://api.joshweb.click/api/findid`, {
+      const res = await axios.get(`https://kaiz-apis.gleeze.com/api/fbuid`, {
         params: { url: profileUrl }
       });
 
       // Extract the Facebook ID from the response
-      const { status, result } = res.data;
+      const { status, UID } = res.data;
 
       if (status && result) {
         // Send the result back to the user
