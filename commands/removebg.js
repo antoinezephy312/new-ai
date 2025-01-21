@@ -61,8 +61,11 @@ async function getRepliedImage(mid, authToken) {
     const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
       params: { access_token: authToken }
     });
-    return data?.data[0]?.image_data?.url || '';
+    const imageUrl = data?.data[0]?.image_data?.url;
+    if (!imageUrl) throw new Error('Image not accessible.');
+    return imageUrl;
   } catch (error) {
-    throw new Error('Failed to retrieve replied image.');
+    console.error('Failed to retrieve replied image:', error);
+    throw error;
   }
 }
