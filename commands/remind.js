@@ -1,9 +1,9 @@
 const moment = require("moment-timezone");
-const { sendMessage } = require("../handles/sendMessage");
+const { sendMessage, sendAudio } = require("../handles/sendMessage");
 
 module.exports = {
   name: "reminder",
-  description: "Set a reminder for a specific time and text.",
+  description: "Set a reminder for a specific time and text with a voice message.",
   role: 1, // Adjust this if needed
   author: "French Mangigo",
 
@@ -58,10 +58,26 @@ module.exports = {
     }, authToken);
 
     // Wait for the specified time and send the reminder
-    setTimeout(() => {
+    setTimeout(async () => {
       sendMessage(bot, {
         text: `⏰ Reminder:\n${text}`
       }, authToken);
+
+      // Fetch the audio file from the TTS API
+      const voiceMessageURL = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=tl&client=tw-ob&idx=1`;
+
+      try {
+        // Use a helper function to send the audio
+        await sendAudio(bot, {
+          audioUrl: voiceMessageURL, // URL for the audio file
+          caption: `🔊 Here's your voice reminder: ${text}`
+        }, authToken);
+      } catch (error) {
+        console.error("Failed to send voice message:", error);
+        sendMessage(bot, {
+          text: `⚠️ Failed to send the voice message. Please check your reminder text or try again later.`
+        }, authToken);
+      }
     }, timeDiff);
   }
 };
