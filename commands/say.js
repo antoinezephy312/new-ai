@@ -1,13 +1,10 @@
 const moment = require("moment-timezone");
-const fs = require("fs-extra");
-const path = require("path");
-const axios = require("axios");
 const { sendMessage } = require("../handles/sendMessage");
 
 module.exports = {
   name: "reminder",
-  description: "Set a reminder for a specific time and text with a voice message.",
-  role: 1, // Adjust as needed
+  description: "Set a reminder for a specific time and text.",
+  role: 1, // Adjust this if needed
   author: "French Mangigo",
 
   async execute(bot, args, authToken, event) {
@@ -61,51 +58,10 @@ module.exports = {
     }, authToken);
 
     // Wait for the specified time and send the reminder
-    setTimeout(async () => {
-      try {
-        // Prepare audio file using Google Translate TTS API
-        const language = "tl"; // Filipino
-        const fileName = `${event.sender.id}_reminder.mp3`;
-        const filePath = path.resolve(__dirname, "cache", fileName);
-
-        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${language}&client=tw-ob&idx=1`;
-
-        // Download the audio file
-        await downloadFile(ttsUrl, filePath);
-
-        // Send the text reminder
-        await sendMessage(bot, {
-          text: `⏰ Reminder:\n${text}`
-        }, authToken);
-
-        // Send the voice reminder
-        await sendMessage(bot, {
-          attachment: fs.createReadStream(filePath)
-        }, authToken);
-
-        // Clean up the file after sending
-        fs.unlinkSync(filePath);
-      } catch (error) {
-        console.error("Error sending reminder:", error);
-        sendMessage(bot, {
-          text: `⚠️ Failed to send the voice reminder. Please try again later.`
-        }, authToken);
-      }
+    setTimeout(() => {
+      sendMessage(bot, {
+        text: `⏰ Reminder:\n${text}`
+      }, authToken);
     }, timeDiff);
   }
 };
-
-// Function to download a file
-async function downloadFile(url, filePath) {
-  const writer = fs.createWriteStream(filePath);
-  const response = await axios({
-    url,
-    method: "GET",
-    responseType: "stream"
-  });
-  response.data.pipe(writer);
-  return new Promise((resolve, reject) => {
-    writer.on("finish", resolve);
-    writer.on("error", reject);
-  });
-}
