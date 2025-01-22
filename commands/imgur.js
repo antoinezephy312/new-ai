@@ -23,11 +23,12 @@ module.exports = {
         return;
       }
 
-      // Call Imgur API to upload the image
+      // Call the provided Imgur API to upload the image
       const imgurResponse = await uploadToImgur(imageUrl);
 
-      if (imgurResponse) {
-        sendMessage(bot, { text: `Image uploaded to Imgur: ${imgurResponse.link}` }, authToken);
+      if (imgurResponse?.uploaded?.status === "success") {
+        const imgurLink = imgurResponse.uploaded.image;
+        sendMessage(bot, { text: `Image uploaded to Imgur: ${imgurLink}` }, authToken);
       } else {
         sendMessage(bot, { text: "Failed to upload the image to Imgur." }, authToken);
       }
@@ -67,16 +68,9 @@ async function getRepliedImage(mid, authToken) {
 
 async function uploadToImgur(imageUrl) {
   try {
-    const response = await axios.post("https://api.imgur.com/3/image", null, {
-      headers: {
-        Authorization: `fc9369e9aea767c`
-      },
-      params: {
-        image: imageUrl,
-        type: "url"
-      }
-    });
-    return response.data.data;
+    const apiUrl = `https://kaiz-apis.gleeze.com/api/imgur?url=${encodeURIComponent(imageUrl)}`;
+    const response = await axios.get(apiUrl);
+    return response.data;
   } catch (error) {
     console.error("Failed to upload to Imgur:", error);
     return null;
