@@ -8,12 +8,12 @@ module.exports = {
   role: 1,
 
   async execute(bot, args, authToken, event) {
-    if (!event.message.reply_to || !event.message.reply_to.attachments) {
-      await sendMessage(bot, {
-        text: 'Please reply to an image with the command to upload it to Imgur.'
-      }, authToken);
-      return;
-    }
+    if (!event.messageReply || !event.messageReply.attachments || event.messageReply.attachments.length === 0) {
+  console.error("Replied message or attachments missing:", event.messageReply);
+  await sendMessage(senderId, { text: "Please reply to an image with the command to upload it to Imgur." }, pageAccessToken);
+  return;
+}
+
 
     const attachments = event.message.reply_to.attachments.filter(att => att.type === 'image');
 
