@@ -10,7 +10,7 @@ module.exports = {
     version: "1.0",
     author: "jfhigtfdv",
     countDown: 5,
-    role: 2,
+    role: 1,
     shortDescription: {
       en: "Create a new post on Facebook Page."
     },
