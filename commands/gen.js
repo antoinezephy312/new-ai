@@ -16,7 +16,7 @@ module.exports = {
     }
 
     const prompt = args.join(' ');
-    const apiUrl = `https://clarence-rest-apiv1.onrender.com/api/art?prompt=${encodeURIComponent(prompt)}`;
+    const apiUrl = `https://dataforge-api-production.up.railway.app/api/ideogramturbo?prompt=${encodeURIComponent(prompt)}`;
 
     try {
       await sendMessage(senderId, {
