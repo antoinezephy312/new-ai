@@ -1,10 +1,8 @@
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
+const FormData = require("form-data");
 const { sendMessage } = require("../handles/sendMessage");
-const { exec } = require("child_process");
-
-// Ensure temp directory exists
 const tempDir = path.join(__dirname, 'temp');
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
@@ -54,8 +52,23 @@ module.exports = {
       videoResponse.data.pipe(writer);
 
       writer.on("finish", async () => {
-        // Send video as attachment
-        await sendMessage(bot, { attachment: fs.createReadStream(tempFilePath) }, authToken);
+        // Prepare form data for sending the video file
+        const form = new FormData();
+        form.append("recipient", JSON.stringify({ id: senderId }));
+        form.append("message", JSON.stringify({ attachment: "file" }));
+        form.append("filedata", fs.createReadStream(tempFilePath));
+
+        // Send the message with the attachment
+        try {
+          const uploadUrl = `https://graph.facebook.com/v12.0/me/messages?access_token=${authToken}`;
+          const uploadResponse = await axios.post(uploadUrl, form, {
+            headers: form.getHeaders(),
+          });
+          console.log("Message sent successfully:", uploadResponse.data);
+        } catch (err) {
+          console.error("Error sending message with attachment:", err);
+          sendMessage(bot, { text: "Failed to send the video." }, authToken);
+        }
 
         // Clean up file after sending
         try {
