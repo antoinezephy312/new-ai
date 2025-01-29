@@ -10,7 +10,7 @@ module.exports = {
     const prompt = args.join(' ');
 
     try {
-      const apiUrl = `https://simi-api-g8kq.onrender.com/sim?query=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://simsimi-api-new-oten.onrender.com/sim?query=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
       const text = response.data.respond;
 
