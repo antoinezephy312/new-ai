@@ -4,7 +4,7 @@ const { sendMessage } = require("../handles/sendMessage");
 module.exports = {
   name: "fbdl",
   description: "Download Facebook videos",
-  role: 0,
+  role: 1,
   author: "Clarence",
 
   async execute(bot, args, authToken, event) {
@@ -15,30 +15,30 @@ module.exports = {
     }
 
     const senderId = event.sender.id;
-    const videoUrl = args[0];
+    const fbUrl = args.join(" ");
 
-    if (!videoUrl) {
-      return sendMessage(bot, { text: "Please provide a Facebook video URL." }, authToken);
+    if (!fbUrl) {
+      return sendMessage(bot, { text: "Please provide a valid Facebook video URL." }, authToken);
     }
 
     try {
-      const apiUrl = `https://dataforge-api-production.up.railway.app/api/downloader?url=${encodeURIComponent(videoUrl)}`;
+      const apiUrl = `https://dataforge-api-production.up.railway.app/api/downloader?url=${encodeURIComponent(fbUrl)}`;
       const response = await axios.get(apiUrl);
-
-      if (response.data.content.status && response.data.content.data.result.length > 0) {
-        const hdVideo = response.data.content.data.result.find(v => v.quality === "HD");
-        const sdVideo = response.data.content.data.result.find(v => v.quality === "SD");
-
-        let message = "\uD83D\uDCF9 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 𝐕𝐢𝐝𝐞𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝\n━━━━━━━━━━━━━━━━━━\n";
-        message += hdVideo ? `🎥 HD: ${hdVideo.url}\n` : "❌ HD video not available\n";
-        message += sdVideo ? `🎥 SD: ${sdVideo.url}\n` : "❌ SD video not available\n";
-
-        sendMessage(bot, { text: message }, authToken);
-      } else {
-        sendMessage(bot, { text: "❌ Failed to retrieve video. Please check the URL and try again." }, authToken);
+      
+      if (!response.data?.content?.status || !response.data?.content?.data?.result?.length) {
+        return sendMessage(bot, { text: "Failed to fetch video. Please check the URL and try again." }, authToken);
       }
+      
+      const videos = response.data.content.data.result;
+      let message = "🎥 Facebook Video Download\n━━━━━━━━━━━━━━━━━━\n";
+      
+      videos.forEach((video, index) => {
+        message += `📌 Quality: ${video.quality}\n🔗 [Download Here](${video.url})\n\n`;
+      });
+      
+      sendMessage(bot, { text: message }, authToken);
     } catch (error) {
-      console.error("Error in Facebook downloader command:", error);
+      console.error("Error in fbdl command:", error);
       sendMessage(bot, { text: `Error: ${error.message || "Something went wrong."}` }, authToken);
     }
   }
