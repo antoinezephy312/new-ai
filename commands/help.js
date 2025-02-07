@@ -7,12 +7,12 @@ module.exports = {
   description: 'Show available commands with descriptions',
   role: 1,
   author: 'kiana',
-  
+
   execute(senderId, args, pageAccessToken) {
     const commandsDir = path.join(__dirname, '../commands');
     const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
-    // Load and format each command with an emoji
+    // Load and format commands
     const commands = commandFiles.map((file) => {
       const command = require(path.join(commandsDir, file));
       return {
@@ -27,16 +27,36 @@ module.exports = {
     const totalPages = Math.ceil(totalCommands / commandsPerPage);
     let page = parseInt(args[0], 10);
 
-    // Default to page 1 if the page argument is invalid
+    // Default to page 1 if no valid page number
     if (isNaN(page) || page < 1) page = 1;
 
-    // Display all commands if "help all" is provided
+    // ✅ Handling "help all" (Multi-message)
     if (args[0]?.toLowerCase() === 'all') {
-      const helpTextMessage = `🌟 **All Available Commands**\n📜 **Total Commands**: ${totalCommands}\n\n${commands.map((cmd, index) => `${index + 1}. ${cmd.title}\n📖 ${cmd.description}`).join('\n\n')}`;
-      return sendMessage(senderId, { text: helpTextMessage }, pageAccessToken);
+      const helpTextParts = [];
+      let tempMessage = `🌟 **All Available Commands**\n📜 **Total Commands**: ${totalCommands}\n\n`;
+
+      commands.forEach((cmd, index) => {
+        const commandText = `${index + 1}. ${cmd.title}\n📖 ${cmd.description}\n\n`;
+        
+        if ((tempMessage + commandText).length > 1900) { // Keeping it under 2000 chars
+          helpTextParts.push(tempMessage);
+          tempMessage = "";
+        }
+
+        tempMessage += commandText;
+      });
+
+      if (tempMessage) helpTextParts.push(tempMessage);
+
+      // Send all parts with delay to avoid spam detection
+      helpTextParts.forEach((part, idx) => {
+        setTimeout(() => sendMessage(senderId, { text: part }, pageAccessToken), idx * 1000);
+      });
+
+      return;
     }
 
-    // Paginate commands
+    // ✅ Handling Pagination (Default)
     const startIndex = (page - 1) * commandsPerPage;
     const commandsForPage = commands.slice(startIndex, startIndex + commandsPerPage);
 
@@ -46,17 +66,15 @@ module.exports = {
       }, pageAccessToken);
     }
 
-    // Format help message with emojis for better readability
     const helpTextMessage = `🚀 **Commands List** (Page ${page}/${totalPages})\n📜 **Total Commands**: ${totalCommands}\n\n${commandsForPage.map((cmd, index) => `${startIndex + index + 1}. ${cmd.title}\n📝 ${cmd.description}`).join('\n\n')}\n\n📌 **Tip**: Use "help [page]" to switch pages, or "help all" to see all commands!`;
 
-    // Generate quick replies only for available commands
+    // ✅ Generate Quick Replies for easier navigation
     const quickReplies = commandsForPage.map((cmd) => ({
       content_type: "text",
       title: cmd.title.replace('✨ ', ''), // Cleaner title for quick replies
       payload: cmd.payload
     }));
 
-    // Send the formatted help message with quick replies
     sendMessage(senderId, {
       text: helpTextMessage,
       quick_replies: quickReplies
