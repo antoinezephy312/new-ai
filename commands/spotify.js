@@ -19,7 +19,7 @@ module.exports = {
     try {
       // Indicate that the bot is searching
       await sendMessage(senderId, {
-        text: `🔍 **Searching for song:**\n${searchQuery}`
+        text: `🔍 𝐒𝐞𝐚𝐫𝐜𝐡𝐢𝐧𝐠 𝐟𝐨𝐫 𝐬𝐨𝐧𝐠:\n${searchQuery}`
       }, pageAccessToken);
 
       const res = await axios.get('https://hiroshi-api.onrender.com/tiktok/spotify', {
