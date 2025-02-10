@@ -17,6 +17,11 @@ module.exports = {
     }
 
     try {
+      // Indicate that the bot is searching
+      await sendMessage(senderId, {
+        text: `🔍 **Searching for song:**\n${searchQuery}`
+      }, pageAccessToken);
+
       const res = await axios.get('https://hiroshi-api.onrender.com/tiktok/spotify', {
         params: { search: searchQuery }
       });
@@ -27,27 +32,31 @@ module.exports = {
 
       const { name: trackName, download, image, track } = res.data[0];
 
-      // Send the track name and link message
-      await sendMessage(senderId, {
-        text: `🎶 Now playing: ${trackName}\n\n🔗 Spotify Link: ${track}`
-      }, pageAccessToken);
-
-      // Send the track image
+      // Send the track preview with buttons
       await sendMessage(senderId, {
         attachment: {
-          type: "image",
+          type: "template",
           payload: {
-            url: image
-          }
-        }
-      }, pageAccessToken);
-
-      // Send the audio attachment
-      await sendMessage(senderId, {
-        attachment: {
-          type: "audio",
-          payload: {
-            url: download
+            template_type: "generic",
+            elements: [
+              {
+                title: trackName,
+                image_url: image,
+                subtitle: "Click a button below to listen or download.",
+                buttons: [
+                  {
+                    type: "web_url",
+                    url: track,
+                    title: "🎵 Listen on Spotify"
+                  },
+                  {
+                    type: "web_url",
+                    url: download,
+                    title: "⬇ Download Audio"
+                  }
+                ]
+              }
+            ]
           }
         }
       }, pageAccessToken);
@@ -55,7 +64,7 @@ module.exports = {
     } catch (error) {
       console.error("Error retrieving the Spotify track:", error);
       await sendMessage(senderId, {
-        text: `Error retrieving the Spotify track. Please try again or check your input.`
+        text: `⚠ Error retrieving the Spotify track. Please try again or check your input.`
       }, pageAccessToken);
     }
   }
