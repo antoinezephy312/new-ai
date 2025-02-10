@@ -61,6 +61,17 @@ module.exports = {
         }
       }, pageAccessToken);
 
+      // Send the audio file as an attachment
+      await sendMessage(senderId, {
+        attachment: {
+          type: "audio",
+          payload: {
+            url: download,
+            is_reusable: true
+          }
+        }
+      }, pageAccessToken);
+    
     } catch (error) {
       console.error("Error retrieving the Spotify track:", error);
       await sendMessage(senderId, {
