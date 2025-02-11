@@ -6,7 +6,7 @@ module.exports = {
   description: 'Ask a question to Claude Ai',
   author: 'Clarence',
   role: 1,
-  async execute(senderId, args, pageAccessToken, sendMessage) {
+  async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
     try {
       const apiUrl = `https://dataforge-api-production.up.railway.app/api/claude3-5-haiku?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
@@ -14,15 +14,15 @@ module.exports = {
       const text = response.data.reply;
 
       // Send the response, split into chunks if necessary
-      await sendResponseInChunks(senderId, text, pageAccessToken, sendMessage);
+      await sendResponseInChunks(senderId, text, pageAccessToken);
     } catch (error) {
       console.error('Error calling Ai:', error);
-      sendMessage(senderId, { text: 'An Error occured' }, pageAccessToken);
+      sendMessage(senderId, { text: 'An Error occurred' }, pageAccessToken);
     }
   }
 };
 
-async function sendResponseInChunks(senderId, text, pageAccessToken, sendMessage) {
+async function sendResponseInChunks(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
   if (text.length > maxMessageLength) {
     const messages = splitMessageIntoChunks(text, maxMessageLength);
