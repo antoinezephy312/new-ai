@@ -17,7 +17,7 @@ module.exports = {
       }, pageAccessToken);
     }
 
-    const apiUrl = `https://rest-apiv2-ni-clarence.onrender.com/api/blackbox?message=${encodeURIComponent(prompt)}`;
+    const apiUrl = `https://ccprojectapis.ddns.net/api/blackb?ask=${encodeURIComponent(prompt)}&uid=${senderId}`;
 
     try {
       const response = await axios.get(apiUrl);
