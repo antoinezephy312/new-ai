@@ -16,7 +16,7 @@ module.exports = {
       }, pageAccessToken);
     }
 
-    const apiUrl = `https://clarence-rest-apiv1.onrender.com/api/gptChat?q=you%20will%20respond%20as%20google%20assistant,%20here%27s%20the%20user%27s%20message:${encodeURIComponent(prompt)}`;
+    const apiUrl = `https://rest-apiv2-jass.onrender.com/api/gptChat?q=you%20will%20respond%20as%20google%20assistant,%20here%27s%20the%20user%27s%20message:${encodeURIComponent(prompt)}`;
 
     try {
       const response = await axios.get(apiUrl);
