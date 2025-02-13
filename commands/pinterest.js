@@ -16,12 +16,12 @@ module.exports = {
     }
 
     try {
-      const apiUrl = `https://kaiz-apis.gleeze.com/api/pinterest?search=${encodeURIComponent(query)}`;
+      const apiUrl = `https://ccprojectapis.ddns.net/api/pin?title=${encodeURIComponent(query)}&count=10`;
       const response = await axios.get(apiUrl);
       const images = response.data.data;
 
       if (images && images.length > 0) {
-        const limitedImages = images.slice(0, 5);  // Limit to 3 images
+        const limitedImages = images.slice(0, 5); // Limit to 5 images
         for (const imageUrl of limitedImages) {
           const imageMessage = {
             attachment: {
@@ -43,4 +43,3 @@ module.exports = {
     }
   }
 };
-          
