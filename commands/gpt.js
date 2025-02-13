@@ -17,7 +17,7 @@ module.exports = {
       }, pageAccessToken);
     }
 
-    const apiUrl = `https://ccprojectapis.ddns.net/api/blackb?ask=${encodeURIComponent(prompt)}&uid=${senderId}`;
+    const apiUrl = `https://ccprojectapis.ddns.net/api/blackb?ask=${encodeURIComponent(prompt)}&id=${senderId}`;
 
     try {
       const response = await axios.get(apiUrl);
