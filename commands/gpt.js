@@ -21,9 +21,9 @@ module.exports = {
 
     try {
       const response = await axios.get(apiUrl);
-      const reply = response.data.response;
+      const reply = response.data.response.message?.trim(); // Extract the message properly
 
-      if (reply) {
+      if (reply && reply.length > 0) {
         // Format the response
         const formattedResponse = `💻📦 𝗕𝗹𝗮𝗰𝗸𝗯𝗼𝘅 𝗔𝗜 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲:\n\n${reply}`;
         
@@ -50,7 +50,7 @@ module.exports = {
         }
       } else {
         // Fallback message if there's no reply
-        await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
+        await sendMessage(senderId, { text: 'Sorry, I didn’t understand that. Can you try rephrasing?' }, pageAccessToken);
       }
     } catch (error) {
       console.error('Error calling Blackbox API:', error);
