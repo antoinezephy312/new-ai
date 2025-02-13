@@ -14,7 +14,7 @@ module.exports = {
       return sendMessage(senderId, { text: 'Hello I\'m Mixtral AI, how can I assist you today?' }, pageAccessToken);
     }
 
-    const apiUrl = `https://clarence-rest-apiv1.onrender.com/api/mixtral-8b?q=${encodeURIComponent(query)}`;
+    const apiUrl = `https://rest-apiv2-jass.onrender.com/api/mixtral-8b?q=${encodeURIComponent(query)}`;
 
     try {
       const response = await axios.get(apiUrl);
