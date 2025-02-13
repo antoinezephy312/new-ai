@@ -9,15 +9,12 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://kaiz-apis.gleeze.com/api/aidetector-v2?q=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://api.zetsu.xyz/ai-detect?q=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      const { ai, human, message } = response.data;
-
-      // Create the full response
-      const fullResponse = `AI Generated: ${ai}\nHuman Generated: ${human}\nMessage: ${message}`;
+      const { result } = response.data;
 
       // Send the response, split into chunks if necessary
-      await sendResponseInChunks(senderId, fullResponse, pageAccessToken);
+      await sendResponseInChunks(senderId, `Result: ${result}`, pageAccessToken);
     } catch (error) {
       console.error('Error calling AI Detection API:', error);
       await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
