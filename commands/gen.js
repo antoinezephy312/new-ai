@@ -19,28 +19,37 @@ module.exports = {
     const apiUrl = `https://dataforge-api-production.up.railway.app/api/ideogramturbo?prompt=${encodeURIComponent(prompt)}`;
 
     try {
-      // Fetch the image from the API
-      const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
+      // Upload the image to Facebook's servers
+      const uploadResponse = await axios.post(
+        `https://graph.facebook.com/v19.0/me/message_attachments?access_token=${pageAccessToken}`,
+        {
+          message: {
+            attachment: {
+              type: 'image',
+              payload: {
+                url: apiUrl,
+                is_reusable: true
+              }
+            }
+          }
+        }
+      );
 
-      // Convert image to a Buffer and encode as base64
-      const base64Image = Buffer.from(response.data, 'binary').toString('base64');
+      // Extract attachment ID from response
+      const attachmentId = uploadResponse.data.attachment_id;
 
-      // Upload the image to an image hosting service (optional)
-      // If the API already returns a usable URL, this step is unnecessary
-
-      // Send the image to Messenger
+      // Send the image using the uploaded attachment ID
       await sendMessage(senderId, {
         attachment: {
           type: 'image',
           payload: {
-            url: apiUrl, // Ensure this is a valid public URL
-            is_reusable: true
+            attachment_id: attachmentId
           }
         }
       }, pageAccessToken);
 
     } catch (error) {
-      console.error('Error generating image:', error);
+      console.error('Error generating image:', error.response?.data || error.message);
       await sendMessage(senderId, {
         text: 'An error occurred while generating the image. Please try again later.'
       }, pageAccessToken);
