@@ -36,14 +36,14 @@ module.exports = {
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = "https://rest-api-french4.onrender.com/api/clarencev2";
+        const apiUrl = "https://dataforge-api-production.up.railway.app/api/4ov2";
         const response = await axios.get(apiUrl, {
           params: {
             prompt: finalPrompt,
             uid: senderId
           }
         });
-        const gptMessage = response.data.response;
+        const gptMessage = response.data.reply;
 
         const gptResponse = `${gptMessage}`;
         sendLongMessage(bot, gptResponse, authToken);
