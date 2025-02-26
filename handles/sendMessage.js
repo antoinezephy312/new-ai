@@ -16,10 +16,11 @@ async function typingIndicator(senderId, pageAccessToken) {
 
 function sendMessage(senderId, message, pageAccessToken) {
   if (!message || (!message.text && !message.attachment)) {
-    console.error("Message must contain 'text' or 'attachment'.");
+    console.error("Error: Message must contain 'text' or 'attachment'.", message);
     return;
   }
 
+  console.log("Sending message:", message);
   typingIndicator(senderId, pageAccessToken);
 
   const requestData = {
