@@ -36,7 +36,7 @@ module.exports = {
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = "https://dataforge-api-production.up.railway.app/api/o1-online";
+        const apiUrl = "https://dataforge-api-production.up.railway.app/api/gemma2";
         const response = await axios.get(apiUrl, {
           params: {
             prompt: finalPrompt,
