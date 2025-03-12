@@ -28,7 +28,7 @@ module.exports = {
 
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
-        const apiUrl = `https://dataforge-api-free.onrender.com/api/gemini-2-0-exp`;
+        const apiUrl = `https://dataforge-api-production.up.railway.app/api/gemini-2-0-exp`;
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.reply;
 
@@ -36,7 +36,7 @@ module.exports = {
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = "https://dataforge-api-free.onrender.com/api/gemini-pro";
+        const apiUrl = "https://dataforge-api-production.up.railway.app/api/gemini-pro";
         const response = await axios.get(apiUrl, {
           params: {
             prompt: finalPrompt,
