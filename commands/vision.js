@@ -28,22 +28,22 @@ module.exports = {
 
       if (imageUrl) {
         // If an image is detected, use Gemini Vision API
-        const apiUrl = `https://dataforge-api-production.up.railway.app/api/sonnet-3-5`;
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
-        const result = response.reply;
+        const result = response.response;
 
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://dataforge-api-production.up.railway.app/api/sonnet-3-5`;
+        const apiUrl = `https://kaiz-apis.gleeze.com/apichipp-ai`;
         const response = await axios.get(apiUrl, {
           params: {
-            prompt: finalPrompt,
+            ask: finalPrompt,
             uid: senderId
           }
         });
-        const gptMessage = response.data.reply;
+        const gptMessage = response.data.response;
 
         const gptResponse = `${gptMessage}`;
         sendLongMessage(bot, gptResponse, authToken);
@@ -59,9 +59,9 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
   try {
     const { data } = await axios.get(apiUrl, {
       params: {
-        prompt: prompt,
+        q: prompt,
         uid: senderId,
-        img: imageUrl || ""
+        imageUrl: imageUrl || ""
       }
     });
     return data;
