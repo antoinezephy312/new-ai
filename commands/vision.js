@@ -36,14 +36,14 @@ module.exports = {
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://api.zetsu.xyz/api/qwen1.5-14b`;
+        const apiUrl = `https://api.zetsu.xyz/api/blackbox`;
         const response = await axios.get(apiUrl, {
           params: {
-            q: finalPrompt,
+            prompt: finalPrompt,
             uid: senderId
           }
         });
-        const gptMessage = response.data.result;
+        const gptMessage = response.data.response;
 
         const gptResponse = `${gptMessage}`;
         sendLongMessage(bot, gptResponse, authToken);
