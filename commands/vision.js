@@ -36,14 +36,14 @@ module.exports = {
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/gpt-4o-pro`;
+        const apiUrl = `https://api.zetsu.xyz/api/qwen1.5-14b`;
         const response = await axios.get(apiUrl, {
           params: {
-            ask: finalPrompt,
+            q: finalPrompt,
             uid: senderId
           }
         });
-        const gptMessage = response.data.response;
+        const gptMessage = response.data.result;
 
         const gptResponse = `${gptMessage}`;
         sendLongMessage(bot, gptResponse, authToken);
