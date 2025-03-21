@@ -36,7 +36,7 @@ module.exports = {
         sendLongMessage(bot, visionResponse, authToken);
       } else {
         // If no image, use GPT API
-        const apiUrl = `https://kaiz-apis.gleeze.com/apichipp-ai`;
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/gpt-4o-pro`;
         const response = await axios.get(apiUrl, {
           params: {
             ask: finalPrompt,
