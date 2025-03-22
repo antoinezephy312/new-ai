@@ -5,7 +5,7 @@ module.exports = {
   name: 'gen',
   description: 'Generate an image based on a prompt.',
   role: 1,
-  author: 'Jay Mar',
+  author: 'FRENCH MANGIGO',
 
   async execute(senderId, args, pageAccessToken) {
     if (!args || args.length === 0) {
@@ -16,7 +16,7 @@ module.exports = {
     }
 
     const prompt = args.join(' ');
-    const apiUrl = `https://dataforge-api-production.up.railway.app/api/ideogramturbo?prompt=${encodeURIComponent(prompt)}`;
+    const apiUrl = `https://api.zetsu.xyz/api/dalle-3?prompt=${encodeURIComponent(prompt)}`;
 
     try {
       // Upload the image to Facebook's servers
