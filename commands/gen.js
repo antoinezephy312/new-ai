@@ -19,12 +19,12 @@ module.exports = {
     const apiUrl = `https://api.zetsu.xyz/api/dalle-3?prompt=${encodeURIComponent(prompt)}`;
 
     try {
-      // Send the image directly from the API URL
+      // Send the image as a regular image URL
       await sendMessage(senderId, {
         attachment: {
           type: 'image',
           payload: {
-            url: apiUrl,
+            url: apiUrl
           }
         }
       }, pageAccessToken);
