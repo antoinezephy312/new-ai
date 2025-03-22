@@ -3,7 +3,7 @@ const { sendMessage } = require("../handles/sendMessage");
 
 module.exports = {
   name: "video",
-  description: "Extract and download YouTube videos",
+  description: "Extract and send YouTube videos",
   role: 1,
   author: "Kaizenji",
 
@@ -22,22 +22,20 @@ module.exports = {
         return sendMessage(senderId, { text: "No video found for the given search query." }, pageAccessToken);
       }
 
-      const message = `📹 **YouTube Video Found:**\n\n🎵 **Title:** ${videoData.title}\n⏱ **Duration:** ${videoData.duration}\n\nClick below to watch/download:`;
+      const message = `📹 **YouTube Video Found:**\n\n🎵 **Title:** ${videoData.title}\n⏱ **Duration:** ${videoData.duration}\n\n⬇️ Downloading... Please wait.`;
 
-      // Send video details message
+      // Send initial message
       await sendMessage(senderId, { text: message }, pageAccessToken);
 
-      // Send video thumbnail
+      // Send the video file
       await sendMessage(senderId, {
         attachment: {
-          type: "image",
-          payload: { url: videoData.thumbnail }
+          type: "video",
+          payload: {
+            url: videoData.download_url,
+            is_reusable: true
+          }
         }
-      }, pageAccessToken);
-
-      // Send the video as a link (since direct video uploads might fail)
-      await sendMessage(senderId, {
-        text: `🎥 **Download Video:**\n[Click Here](${videoData.download_url})`
       }, pageAccessToken);
 
     } catch (error) {
