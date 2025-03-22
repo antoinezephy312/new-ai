@@ -19,7 +19,16 @@ module.exports = {
     const apiUrl = `https://api.zetsu.xyz/api/dalle-3?prompt=${encodeURIComponent(prompt)}`;
 
     try {
-      // Upload the image to Facebook's servers
+      // Step 1: Fetch the image from the API
+      const response = await axios.get(apiUrl, { responseType: 'json' });
+
+      if (!response.data || !response.data.url) {
+        throw new Error('Invalid API response');
+      }
+
+      const imageUrl = response.data.url; // Assuming the API response contains "url"
+
+      // Step 2: Upload the image to Facebook's servers
       const uploadResponse = await axios.post(
         `https://graph.facebook.com/v19.0/me/message_attachments?access_token=${pageAccessToken}`,
         {
@@ -27,7 +36,7 @@ module.exports = {
             attachment: {
               type: 'image',
               payload: {
-                url: apiUrl,
+                url: imageUrl,
                 is_reusable: true
               }
             }
@@ -35,10 +44,10 @@ module.exports = {
         }
       );
 
-      // Extract attachment ID from response
+      // Step 3: Extract attachment ID from response
       const attachmentId = uploadResponse.data.attachment_id;
 
-      // Send the image using the uploaded attachment ID
+      // Step 4: Send the image using the uploaded attachment ID
       await sendMessage(senderId, {
         attachment: {
           type: 'image',
