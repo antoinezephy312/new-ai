@@ -24,9 +24,9 @@ module.exports = {
         }
       }, pageAccessToken);
     } catch (error) {
-      console.error("Failed to fetch the Chilli video:", error);
+      console.error("Failed to fetch the video:", error);
       sendMessage(senderId, {
-        text: `Failed to fetch the Chilli video. Error: ${error.message || "Unknown error"}`
+        text: `Failed to fetch the video. Error: ${error.message || "Unknown error"}`
       }, pageAccessToken);
     }
   }
