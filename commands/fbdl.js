@@ -2,7 +2,7 @@ module.exports = {
   name: 'fbdown',
   description: 'Download Facebook video',
   author: 'Kiro',
-  role: 0,
+  role: 1,
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       return sendMessage(senderId, { text: 'Please provide a Facebook video URL.' }, pageAccessToken);
