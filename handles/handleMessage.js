@@ -80,7 +80,7 @@ async function sendIntroduction(senderId, pageAccessToken) {
       type: "template",
       payload: {
         template_type: "button",
-        text: "Hello! I am ClarenceAi, your assistant.\n\nType 'help' for available commands.",
+        text: "Hello! I am Kiro, your assistant.\n\nType 'help' for available commands.",
         buttons: [
           {
             type: "postback",
