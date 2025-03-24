@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { sendMessage } = require("../handles/message");
+const { sendMessage } = require("../handles/sendMessage");
 
 console.log("sendMessage function:", sendMessage);
 
