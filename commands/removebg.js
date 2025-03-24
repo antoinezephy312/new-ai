@@ -25,7 +25,7 @@ module.exports = {
 
       await sendMessage(bot, { text: '⌛ 𝗥𝗲𝗺𝗼𝘃𝗶𝗻𝗴 𝗯𝗮𝗰𝗸𝗴𝗿𝗼𝘂𝗻𝗱 𝗶𝗺𝗮𝗴𝗲, 𝗽𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁...' }, authToken);
 
-      const removeBgUrl = `https://ccprojectapis.ddns.net/api/removebg?url=${encodeURIComponent(imageUrl)}`;
+      const removeBgUrl = `https://jonell01-ccprojectsapihshs.hf.space/api/removebg?url=${encodeURIComponent(imageUrl)}`;
 
       await sendMessage(bot, {
         attachment: {
