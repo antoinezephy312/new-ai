@@ -16,8 +16,8 @@ module.exports = {
 
     const senderId = event.sender.id;
     const userPrompt = args.join(" ");
-    const repliedMessage = event.message.reply_to?.message || ""; // Get the replied message content
-    const finalPrompt = repliedMessage ? `${repliedMessage} ${userPrompt}`.trim() : userPrompt; // Combine reply + user input
+    const repliedMessage = event.message.reply_to?.message || "";
+    const finalPrompt = repliedMessage ? `${repliedMessage} ${userPrompt}`.trim() : userPrompt;
 
     if (!finalPrompt) {
       return sendMessage(bot, { text: "Please enter your question or reply with an image to analyze." }, authToken);
@@ -27,7 +27,6 @@ module.exports = {
       const imageUrl = await extractImageUrl(event, authToken);
 
       if (imageUrl) {
-        // If an image is detected, use Gemini Vision API
         const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.response;
@@ -35,18 +34,16 @@ module.exports = {
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
         sendLongMessage(bot, visionResponse, authToken);
       } else {
-        // If no image, use GPT API
-        const apiUrl = `https://api.zetsu.xyz/api/blackbox`;
+        const apiUrl = `https://jonell01-ccprojectsapihshs.hf.space/api/gpt4`;
         const response = await axios.get(apiUrl, {
           params: {
-            prompt: finalPrompt,
-            uid: senderId
+            ask: finalPrompt,
+            id: senderId
           }
         });
-        const gptMessage = response.data.response;
+        const gptMessage = response.data;
 
-        const gptResponse = `${gptMessage}`;
-        sendLongMessage(bot, gptResponse, authToken);
+        sendLongMessage(bot, gptMessage, authToken);
       }
     } catch (error) {
       console.error("Error in AI command:", error);
