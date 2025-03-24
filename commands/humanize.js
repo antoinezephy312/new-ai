@@ -9,7 +9,7 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://ccprojectapis.ddns.net/api/aihuman?text=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://jonell01-ccprojectsapihshs.hf.space/api/aihuman?text=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
       
       if (response.data.error !== 'No') {
