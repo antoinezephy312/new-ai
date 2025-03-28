@@ -7,11 +7,28 @@ module.exports = {
   role: 1,
   author: "Jay Mar",
 
-  async execute(senderId, args, pageAccessToken) {
+  async execute(senderId, args, pageAccessToken, event) {
     try {
       const searchQuery = args.join(" ");
       if (!searchQuery) {
         return sendMessage(senderId, { text: "Usage: tiksearch <search text>" }, pageAccessToken);
+      }
+
+      // Check if it's a postback from the "Watch Video" button
+      if (event && event.postback) {
+        const payload = JSON.parse(event.postback.payload);
+        if (payload.action === "send_video") {
+          return sendMessage(senderId, {
+            attachment: {
+              type: 'video',
+              payload: {
+                url: payload.video_url,
+                is_reusable: true
+              }
+            }
+          }, pageAccessToken);
+        }
+        return; // Exit if it's not the "send_video" postback
       }
 
       const response = await axios.get(`https://markdevs-last-api-vtjp.onrender.com/api/tiksearch?search=${encodeURIComponent(searchQuery)}`);
@@ -33,7 +50,7 @@ module.exports = {
               {
                 title: `Tiksearch Result: ${videoData.title}`,
                 subtitle: `Post by: ${videoData.author.nickname} (@${videoData.author.unique_id})`,
-                image_url: videoData.cover, 
+                image_url: videoData.cover,
                 buttons: [
                   {
                     type: "postback",
@@ -51,6 +68,7 @@ module.exports = {
       };
 
       sendMessage(senderId, message, pageAccessToken);
+
     } catch (error) {
       console.error('Error:', error);
       sendMessage(senderId, { text: "An error occurred while processing the request." }, pageAccessToken);
