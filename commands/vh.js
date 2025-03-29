@@ -9,26 +9,31 @@ module.exports = {
 
   async execute(senderId, args, pageAccessToken, event) {
     try {
+      // Handle postback when "Watch Video" is clicked
+      if (event && event.postback) {
+        try {
+          const payload = JSON.parse(event.postback.payload);
+          if (payload.action === "send_video") {
+            return sendMessage(senderId, {
+              attachment: {
+                type: 'video',
+                payload: {
+                  url: payload.video_url,
+                  is_reusable: true
+                }
+              }
+            }, pageAccessToken);
+          }
+        } catch (error) {
+          console.error("Invalid postback payload:", error);
+          return sendMessage(senderId, { text: "Invalid postback data." }, pageAccessToken);
+        }
+      }
+
+      // Continue normal TikTok search if no postback
       const searchQuery = args.join(" ");
       if (!searchQuery) {
         return sendMessage(senderId, { text: "Usage: tiksearch <search text>" }, pageAccessToken);
-      }
-
-      // Check if it's a postback from the "Watch Video" button
-      if (event && event.postback) {
-        const payload = JSON.parse(event.postback.payload);
-        if (payload.action === "send_video") {
-          return sendMessage(senderId, {
-            attachment: {
-              type: 'video',
-              payload: {
-                url: payload.video_url,
-                is_reusable: true
-              }
-            }
-          }, pageAccessToken);
-        }
-        return; // Exit if it's not the "send_video" postback
       }
 
       const response = await axios.get(`https://markdevs-last-api-vtjp.onrender.com/api/tiksearch?search=${encodeURIComponent(searchQuery)}`);
@@ -68,7 +73,6 @@ module.exports = {
       };
 
       sendMessage(senderId, message, pageAccessToken);
-
     } catch (error) {
       console.error('Error:', error);
       sendMessage(senderId, { text: "An error occurred while processing the request." }, pageAccessToken);
