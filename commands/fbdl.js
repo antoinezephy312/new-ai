@@ -5,7 +5,7 @@ console.log("sendMessage function:", sendMessage);
 
 module.exports = {
   name: "fbdl",
-  description: "Facebook downloader",
+  description: "Instagram & Facebook Video Downloader",
   role: 1,
   author: "mark",
 
@@ -19,11 +19,14 @@ module.exports = {
     }
 
     try {
-      const apiUrl = `https://markdevs-last-api-vtjp.onrender.com/facebook?url=${encodeURIComponent(prompt)}`;
+      const apiUrl = `https://ccprojectsapis.zetsu.xyz/api/fbdl?url=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
-      
-      // Extract the video URL from the API response
-      const videoUrl = response.data.result;
+
+      if (!response.data || !response.data.dl) {
+        throw new Error("Invalid API response.");
+      }
+
+      const videoUrl = response.data.dl;
 
       console.log("Sending message with video URL:", videoUrl);
 
