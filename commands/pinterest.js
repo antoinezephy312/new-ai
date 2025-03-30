@@ -16,7 +16,7 @@ module.exports = {
     }
 
     try {
-      const apiUrl = `https://jonell01-ccprojectsapihshs.hf.space/api/pin?title${encodeURIComponent(query)}&count=10`;
+      const apiUrl = `https://ccprojectsapis.zetsu.xyz/api/pin?title=${encodeURIComponent(query)}&count=10`;
       const response = await axios.get(apiUrl);
       const images = response.data.data;
 
