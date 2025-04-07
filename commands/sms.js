@@ -1,46 +1,54 @@
-const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage');
+const axios = require("axios");
 
 module.exports = {
-  name: 'sms',
-  description: 'SMS spam',
-  author: 'Clarence',
-  role: 1,
-  async execute(senderId, args, pageAccessToken) {
-    if (args.length < 3) {
-      sendMessage(senderId, { text: 'Usage: sms <phone> <count> <interval>' }, pageAccessToken);
-      return;
-    }
-
-    const [phone, count, interval] = args;
-
-    if (isNaN(count) || isNaN(interval)) {
-      sendMessage(senderId, { text: 'Count and interval must be numbers.' }, pageAccessToken);
-      return;
-    }
-
-    try {
-      const apiUrl = `https://kaiz-apis.gleeze.com/api/spamsms?phone=${encodeURIComponent(phone)}&count=${count}&interval=${interval}`;
-      const response = await axios.get(apiUrl);
-
-      if (response.data.success) {
-        const resultText = response.data.result
-          .map((item) => `Message #${item.messageNumber}: ${item.result}`)
-          .join('\n');
-        
-        sendMessage(
-          senderId,
-          {
-            text: `SMS spam initiated!\n\nTarget Number: ${response.data.target_number}\nCount: ${response.data.count}\nInterval: ${response.data.interval} sec(s)\n\nResults:\n${resultText}`,
-          },
-          pageAccessToken
-        );
-      } else {
-        sendMessage(senderId, { text: 'Failed to initiate SMS spam. Please try again.' }, pageAccessToken);
-      }
-    } catch (error) {
-      console.error('Error initiating SMS spam:', error);
-      sendMessage(senderId, { text: 'An error occurred while processing your request.' }, pageAccessToken);
+  config: {
+    name: "sms",
+    version: "1.0",
+    author: "Kaizenji",
+    role: 0,
+    shortDescription: {
+      en: "Send SMS via API"
+    },
+    category: "utility",
+    guide: {
+      en: "sms [number] [count] [interval]"
     }
   },
+
+  onStart: async function ({ api, event, args }) {
+    const threadID = event.threadID;
+    const messageID = event.messageID;
+
+    if (args.length < 3) {
+      return api.sendMessage("❌ | Usage: sms [number] [count] [interval]", threadID, messageID);
+    }
+
+    const [number, count, interval] = args;
+    const apiUrl = `https://kaizenji-rest-api.kyrinwu.repl.co/api/sms?number=${number}&count=${count}&interval=${interval}`;
+
+    try {
+      const response = await axios.get(apiUrl);
+      const data = response.data;
+
+      if (!data.success) {
+        return api.sendMessage("❌ | API failed to send messages.", threadID, messageID);
+      }
+
+      // Generate a short summary of first few results
+      const summary = data.result
+        .slice(0, 10) // first 10 results only
+        .map(r => `• Message ${r.messageNumber}: ${r.result}`)
+        .join("\n");
+
+      const remaining = data.result.length - 10;
+      const extraNotice = remaining > 0 ? `\n...and ${remaining} more.` : "";
+
+      const message = `✅ SMS Sent by ${data.author}\n📱 Target: ${data.target_number}\n🧾 Count: ${data.count}\n⏱️ Interval: ${data.interval}s\n\n📩 Results:\n${summary}${extraNotice}`;
+
+      return api.sendMessage(message, threadID, messageID);
+    } catch (error) {
+      console.error(error);
+      return api.sendMessage("⚠️ | An error occurred while sending the SMS.", threadID, messageID);
+    }
+  }
 };
