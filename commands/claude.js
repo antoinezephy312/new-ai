@@ -2,16 +2,16 @@ const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
-  name: 'claudie',
+  name: 'claude',
   description: 'Ask a question to Claude Ai',
   author: 'Clarence',
   role: 1,
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
     try {
-      const apiUrl = `https://dataforge-api-production.up.railway.app/api/claude3-5-haiku?prompt=${encodeURIComponent(prompt)}&uid=${senderId}`;
+      const apiUrl = `https://kaiz-apis.gleeze.com/api/claude3-haiku?ask=${encodeURIComponent(prompt)}&apikey=8499a47e-19b0-40a2-84c9-a3f1ec2d929d`;
       const response = await axios.get(apiUrl);
-      const text = response.data.reply;
+      const text = response.data.response;
 
       // Send the response, split into chunks if necessary
       await sendResponseInChunks(senderId, text, pageAccessToken);
