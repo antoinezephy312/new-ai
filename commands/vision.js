@@ -58,7 +58,8 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
       params: {
         q: prompt,
         uid: senderId,
-        imageUrl: imageUrl || ""
+        imageUrl: imageUrl || "",
+        apikey: "8499a47e-19b0-40a2-84c9-a3f1ec2d929d"
       }
     });
     return data;
@@ -66,6 +67,7 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
     throw new Error("Failed to connect to the Gemini Vision API.");
   }
 }
+
 
 async function extractImageUrl(event, authToken) {
   try {
