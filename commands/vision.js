@@ -34,14 +34,17 @@ module.exports = {
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
         sendLongMessage(bot, visionResponse, authToken);
       } else {
-        const apiUrl = `https://jonell01-ccprojectsapihshs.hf.space/api/gpt4`;
-        const response = await axios.get(apiUrl, {
-          params: {
-            ask: finalPrompt,
-            id: senderId
-          }
-        });
-        const gptMessage = response.data;
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/gpt-4o`;
+const response = await axios.get(apiUrl, {
+  params: {
+    ask: finalPrompt,
+    uid: senderId,
+    webSearch: "off",
+    apikey: "8499a47e-19b0-40a2-84c9-a3f1ec2d929d"
+  }
+});
+const gptMessage = response.data.response;
+
 
         sendLongMessage(bot, gptMessage, authToken);
       }
