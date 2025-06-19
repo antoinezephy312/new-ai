@@ -40,7 +40,7 @@ const response = await axios.get(apiUrl, {
     ask: finalPrompt,
     uid: senderId,
     webSearch: "off",
-    apikey: "125a9ff9-cf66-41cf-9e65-5950a84ac7b8"
+    apikey: "78fef9ba-a8a2-4540-b1d3-fccfda9d2c81"
   }
 });
 const gptMessage = response.data.response;
@@ -62,7 +62,7 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
         q: prompt,
         uid: senderId,
         imageUrl: imageUrl || "",
-        apikey: "125a9ff9-cf66-41cf-9e65-5950a84ac7b8"
+        apikey: "78fef9ba-a8a2-4540-b1d3-fccfda9d2c81"
       }
     });
     return data;
