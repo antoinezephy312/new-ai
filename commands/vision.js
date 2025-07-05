@@ -3,7 +3,7 @@ const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
   name: "ai",
-  description: "Gpt4o x Gemini AI",
+  description: "Aria x Gemini AI",
   role: 1,
   author: "Kiana",
 
@@ -27,26 +27,23 @@ module.exports = {
       const imageUrl = await extractImageUrl(event, authToken);
 
       if (imageUrl) {
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
+        const apiUrl = "https://kaiz-apis.gleeze.com/api/gemini-vision";
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.response;
 
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
         sendLongMessage(bot, visionResponse, authToken);
       } else {
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/gpt-4o`;
-const response = await axios.get(apiUrl, {
-  params: {
-    ask: finalPrompt,
-    uid: senderId,
-    webSearch: "off",
-    apikey: "78fef9ba-a8a2-4540-b1d3-fccfda9d2c81"
-  }
-});
-const gptMessage = response.data.response;
-
-
-        sendLongMessage(bot, gptMessage, authToken);
+        const apiUrl = "https://kaiz-apis.gleeze.com/api/aria";
+        const response = await axios.get(apiUrl, {
+          params: {
+            ask: finalPrompt,
+            uid: senderId,
+            apikey: "abded3c6-cef4-42f8-8dea-78bff82f8a59"
+          }
+        });
+        const ariaMessage = response.data.response;
+        sendLongMessage(bot, ariaMessage, authToken);
       }
     } catch (error) {
       console.error("Error in AI command:", error);
@@ -70,7 +67,6 @@ async function handleImageRecognition(apiUrl, prompt, imageUrl, senderId) {
     throw new Error("Failed to connect to the Gemini Vision API.");
   }
 }
-
 
 async function extractImageUrl(event, authToken) {
   try {
