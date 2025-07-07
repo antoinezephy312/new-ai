@@ -39,6 +39,7 @@ module.exports = {
           params: {
             q: finalPrompt,
             uid: senderId,
+            imageUrl: imageUrl || "",
             apikey: "abded3c6-cef4-42f8-8dea-78bff82f8a59"
           }
         });
