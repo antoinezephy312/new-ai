@@ -34,10 +34,10 @@ module.exports = {
         const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
         sendLongMessage(bot, visionResponse, authToken);
       } else {
-        const apiUrl = "https://kaiz-apis.gleeze.com/api/aria";
+        const apiUrl = "https://kaiz-apis.gleeze.com/api/gemini-flash-2.0";
         const response = await axios.get(apiUrl, {
           params: {
-            ask: finalPrompt,
+            q: finalPrompt,
             uid: senderId,
             apikey: "abded3c6-cef4-42f8-8dea-78bff82f8a59"
           }
